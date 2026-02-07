@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+*.swo
+*~
+.secrets
+.aliases.local
+.zshrc.local
+.zshenv.local
+.gitconfig.local
+.tmux.conf.local
+.vimrc.local

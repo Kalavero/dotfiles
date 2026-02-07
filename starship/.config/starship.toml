@@ -1,0 +1,49 @@
+format = """
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$ruby\
+$nodejs\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[>](bold green)"
+error_symbol = "[>](bold red)"
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+
+[git_branch]
+format = " [$branch]($style) "
+style = "bold yellow"
+
+[git_commit]
+format = "[$hash](white) "
+only_detached = false
+tag_disabled = true
+commit_hash_length = 7
+
+[git_status]
+format = '([$all_status$ahead_behind]($style))'
+style = "bold yellow"
+modified = "!"
+untracked = "?"
+staged = "+"
+
+[ruby]
+format = " [$version](red) "
+detect_files = ["Gemfile", ".ruby-version"]
+
+[nodejs]
+format = " [$version](green) "
+detect_files = ["package.json", ".node-version"]
+
+[lua]
+disabled = true
+
+[package]
+disabled = true
