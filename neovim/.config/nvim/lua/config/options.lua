@@ -53,7 +53,9 @@ opt.list = true
 opt.listchars = { tab = "»·", trail = "·", nbsp = "·" }
 
 -- Spell
-opt.spellfile = vim.fn.expand("$HOME/.vim-spell.utf-8.add")
+local spell_dir = vim.fn.stdpath("data") .. "/site/spell"
+vim.fn.mkdir(spell_dir, "p")
+opt.spellfile = spell_dir .. "/en.utf-8.add"
 opt.complete:append("kspell")
 opt.spelllang = "en_us,pt_br"
 
