@@ -51,7 +51,7 @@ Leader key: **Space**
 | `<Leader>b` | Buffers |
 | `<Leader>m` | Recent files |
 | `K` | Grep word under cursor |
-| `<C-\>` | Toggle file tree |
+| `<C-\>` | Toggle file tree at current file |
 | `<Leader><Leader>` | Switch last two files |
 | `vv` / `ss` | Vertical / horizontal split |
 | `<Leader>-` / `<Leader>=` | Zoom pane / rebalance |

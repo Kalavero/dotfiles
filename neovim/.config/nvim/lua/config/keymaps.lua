@@ -48,7 +48,7 @@ map("n", "<Leader>y", '"+y', { desc = "Yank to clipboard" })
 map("n", "<Leader>p", '"+p', { desc = "Paste from clipboard" })
 
 -- nvim-tree (replaces NERDTree)
-map("n", "<C-\\>", "<cmd>NvimTreeToggle<CR>", { silent = true, desc = "Toggle file tree" })
+map("n", "<C-\\>", "<cmd>NvimTreeFindFileToggle<CR>", { silent = true, desc = "Toggle file tree at current file" })
 
 -- vim-rspec mappings
 map("n", "<Leader>rs", ":call RunCurrentSpecFile()<CR>", { desc = "Run current spec" })
