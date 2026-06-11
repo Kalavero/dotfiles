@@ -1,0 +1,16 @@
+{
+  "name": "kalavero",
+  "owner": {
+    "name": "Andre Verissimo"
+  },
+  "metadata": {
+    "description": "Andre's personal Claude Code plugin — workflow skills and commands."
+  },
+  "plugins": [
+    {
+      "name": "kalavero",
+      "source": "./plugins/kalavero",
+      "description": "Personal workflow skills: technical approach documents and more."
+    }
+  ]
+}
