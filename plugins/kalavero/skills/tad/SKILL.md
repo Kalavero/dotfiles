@@ -3,16 +3,16 @@ name: tad
 description: >
   Generate a technical approach document (TAD) for a project or initiative. Walks through
   discovery, codebase research, and collaborative solution design, then produces a reviewable
-  markdown file (or updates an existing Linear document). Use when the user asks to write a tech
-  approach, technical approach doc, TAD, design doc, or to plan the technical implementation of a
-  feature, project, or Linear ticket before coding.
+  markdown file (or updates an existing document in the connected tracker/docs tool). Use when
+  the user asks to write a tech approach, technical approach doc, TAD, design doc, or to plan
+  the technical implementation of a feature, project, or ticket before coding.
 ---
 
 # Technical Approach Document (TAD)
 
 Generate a technical approach document for a project or initiative. Walk through discovery, codebase research, and collaborative solution design — then produce a reviewable markdown file.
 
-`$ARGUMENTS` is optional context: a brief description of the project, a Linear ticket ID, or a Notion page URL.
+`$ARGUMENTS` is optional context: a brief description of the project, a ticket ID, or a document URL.
 
 ---
 
@@ -23,12 +23,12 @@ Before gathering any context, ask the user:
 > "Where should the final tech approach live? Reply with:
 >
 > - **`markdown`** — I'll write a new file under `docs/tech-approaches/<slug>.md`.
-> - **`linear`** — paste the URL of an existing Linear document and I'll update it. I won't create one from scratch."
+> - **`document`** — paste the URL of an existing document in your connected tracker or docs tool and I'll update it. I won't create one from scratch."
 
 Wait for an answer before proceeding. Record the choice:
 
 - **markdown** — target path is `docs/tech-approaches/<slug>.md`.
-- **linear** — the user must paste a Linear document URL. If they don't, ask again; do not create a new document. Resolve the document ID from the URL and confirm it exists with `mcp__linear__get_document` before continuing.
+- **document** — the user must paste a document URL. If they don't, ask again; do not create a new document. Resolve the document from the URL and confirm it exists using the connected MCP's document-fetch tool before continuing.
 
 Carry this decision through to Phase 4.
 
@@ -40,12 +40,12 @@ Carry this decision through to Phase 4.
 
 Before doing anything else, ask the user:
 
-> "Do you have any Notion documents, Linear tickets, or other references I should read before we start? Paste URLs or IDs and I'll pull them in."
+> "Do you have any documents, tickets, or other references I should read before we start? Paste URLs or IDs and I'll pull them in."
 
 If the user provides:
 
-- **Notion URLs** — call `mcp__notion__notion-fetch` for each.
-- **Linear ticket IDs** (e.g., `VAD-1234`, `R2D2-5678`) — call `mcp__linear__get_issue` for each. Pull description, acceptance criteria, comments.
+- **Document URLs** — fetch each via the connected docs MCP (Notion, Confluence, or similar).
+- **Ticket IDs** (e.g., `ABC-1234`) — fetch each via the connected tracker MCP. Pull description, acceptance criteria, comments.
 - **Nothing** — proceed with `$ARGUMENTS` and the conversation.
 
 A PRD is the typical anchor. Assume the reader has read it — the TAD should not re-explain product motivation in detail.
@@ -103,7 +103,7 @@ Iterate until the user is satisfied. The conversation IS the design process.
 Use the destination chosen in Phase 0:
 
 - **markdown** — write to `docs/tech-approaches/<slug>.md` where `<slug>` is a kebab-case name derived from the project title. Use the Write tool.
-- **linear** — update the document the user provided via `mcp__linear__save_document` using the resolved document ID. Do not create a new document. Preserve the existing title unless the user asks otherwise; replace the body with the rendered content below.
+- **document** — update the document the user provided via the connected MCP's document-save tool. Do not create a new document. Preserve the existing title unless the user asks otherwise; replace the body with the rendered content below.
 
 The structure below is a starting point. Reshape headings, drop sections, or add new ones to fit the project — the goal is a document a human can read end-to-end without losing interest.
 
@@ -188,7 +188,7 @@ flowchart TD
 Confirm using the destination chosen in Phase 0:
 
 - **markdown** — "Tech approach document written to `docs/tech-approaches/<slug>.md`. Want to review it, or should we iterate on any section?"
-- **linear** — "Tech approach written to the Linear document at `<url>`. Want to review it, or should we iterate on any section?"
+- **document** — "Tech approach written to the document at `<url>`. Want to review it, or should we iterate on any section?"
 
 ---
 
@@ -198,10 +198,10 @@ If the user requests changes:
 
 1. Read the existing content first:
    - **markdown** — read the file with the Read tool.
-   - **linear** — fetch the current body with `mcp__linear__get_document`.
+   - **document** — fetch the current body via the connected MCP's document-fetch tool.
 2. Apply changes:
    - **markdown** — use the Edit tool for targeted changes.
-   - **linear** — call `mcp__linear__save_document` with the updated body. Apply targeted changes to the existing content; do not rewrite the whole document unless asked.
+   - **document** — save the updated body via the connected MCP's document-save tool. Apply targeted changes to the existing content; do not rewrite the whole document unless asked.
 3. Summarize what changed.
 
 Targeted edits, not rewrites.
