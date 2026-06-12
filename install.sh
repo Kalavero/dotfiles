@@ -47,7 +47,7 @@ remove_old_symlink ".vim"
 remove_old_symlink ".vimrc"
 
 # 6. Stow all packages
-packages=(zsh aliases starship git neovim tmux bin)
+packages=(zsh aliases starship git neovim tmux bin ghostty)
 echo "==> Stowing packages..."
 for pkg in "${packages[@]}"; do
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
@@ -65,6 +65,6 @@ fi
 echo ""
 echo "==> Done! Next steps:"
 echo "  1. Open a new terminal to apply changes"
-echo "  2. Set iTerm2 font to JetBrainsMono Nerd Font"
+echo "  2. Set iTerm2 font to JetBrainsMono Nerd Font (Ghostty is configured automatically)"
 echo "  3. Open nvim — plugins will auto-install on first launch"
 echo "  4. In tmux, press Ctrl-a + I to install tmux plugins"
