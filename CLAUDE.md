@@ -23,6 +23,7 @@ Personal dotfiles for macOS development. Uses **GNU Stow** for symlink managemen
 | `neovim/` | `.config/nvim/` (Lua config, lazy.nvim plugins) |
 | `tmux/` | `.tmux.conf` (prefix Ctrl-a, vim-aware nav, TPM) |
 | `bin/` | `.local/bin/tat` (tmux attach-or-create) |
+| `ghostty/` | `.config/ghostty/config` (Gruvbox Dark, JetBrainsMono Nerd Font, option-as-alt) |
 
 ## Neovim Config Structure
 
