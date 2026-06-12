@@ -10,4 +10,5 @@
 .gitconfig.local
 .tmux.conf.local
 .vimrc.local
+ghostty/.config/ghostty/config.local
 tasks/
