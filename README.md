@@ -13,6 +13,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `git/` | Git | 60+ aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
+| `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
 ## Install
 
@@ -129,6 +130,62 @@ Override any config locally without touching tracked files:
 | `~/.tmux.conf.local` | Extra tmux config |
 | `~/.secrets` | API keys, tokens |
 
+## AI Workflow (Claude Code)
+
+The repo doubles as a [Claude Code](https://claude.com/claude-code) plugin marketplace. The `kalavero` plugin at `plugins/kalavero/` packages personal engineering workflows as commands, skills, and agents. Nothing in it is tied to a specific employer or vendor — trackers, PR templates, and branch conventions are discovered at runtime from whatever repo and MCP servers are available.
+
+### Setup
+
+```bash
+claude plugin marketplace add ~/kalavero_dotfiles
+claude plugin install kalavero@kalavero
+```
+
+### Commands
+
+Commands are typed explicitly (`/kalavero:<name>`) to kick off a workflow:
+
+| Command | What it does |
+|---------|--------------|
+| `/kalavero:implement` | Implement a task end-to-end with the agent team (see below) |
+| `/kalavero:fix-bug` | Fix a bug: analyze the ticket, trace root cause, failing test first, reviewed fix |
+| `/kalavero:start-ticket` | Fetch a ticket, summarize it, move to In Progress, create a branch |
+| `/kalavero:pr-create` | Draft a PR using the repo's template and ticket-linking conventions |
+| `/kalavero:plan` | Break work into small verifiable tasks with acceptance criteria |
+| `/kalavero:build` | Implement the next planned task — test, verify, commit |
+| `/kalavero:why` | Explain why code exists by tracing commits, PRs, and tickets |
+| `/kalavero:standup` | Summarize recent commits, PRs, and ticket movement into standup notes |
+| `/kalavero:release-notes` | Generate a changelog from merged PRs since the last release |
+
+### Skills
+
+Skills are picked up by Claude automatically when a task matches their description (no command needed):
+
+| Skill | Kicks in when... |
+|-------|------------------|
+| `tad` | Writing a technical approach document before coding |
+| `tad-to-tickets` | An approved TAD needs to become tracker tickets |
+| `agent-brief` | Delegating work to an AI coding agent from a rough idea |
+| `refactor-plan` | Restructuring code where changing behavior is the main risk |
+| `migration-safety` | Writing or reviewing database migrations |
+| `flaky-spec` | A test fails intermittently or only in CI |
+| `dotfiles-package` | Adding or restructuring config in this repo |
+| `planning-and-task-breakdown`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
+
+### Agents
+
+Agents are specialized subagent personas, launched individually or coordinated by `/kalavero:implement`:
+
+| Agent | Role |
+|-------|------|
+| `researcher` | Read-only: maps the code relevant to a task — files, patterns, prior art, risks |
+| `planner` | Read-only: decomposes work into small ordered tasks with acceptance criteria |
+| `implementer` | Executes exactly one task — failing test first, minimal code, honest report |
+| `test-engineer` | Test strategy, coverage analysis, and test writing in the project's idiom |
+| `code-reviewer` | Five-axis review (correctness, readability, architecture, security, performance) with an APPROVE / REQUEST CHANGES verdict |
+
+`/kalavero:implement` wires them together: researcher maps the code, planner produces a task list (gated on human approval), then for each task the implementer builds while test-engineer and code-reviewer verify in parallel — failed reviews loop back to the implementer, capped at two rounds before escalating to you.
+
 ## Testing with Docker
 
 ```bash
@@ -139,3 +196,5 @@ docker run -it kalavero-dotfiles
 ## Credits
 
 Inspired by [Campus Code dotfiles](https://github.com/campuscode/cc_dotfiles), [Skwp](https://github.com/skwp/dotfiles), and [ThoughtBot](https://github.com/thoughtbot/dotfiles).
+
+Parts of the Claude Code plugin (the `build`/`plan` commands, the core methodology skills, and the `code-reviewer`/`test-engineer` agents) are adapted from [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills) (MIT License), with attribution comments in each file.
