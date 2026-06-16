@@ -35,6 +35,17 @@ remove_old_symlink() {
   fi
 }
 
+# Back up a real config that would make stow abort. Packages that fold a whole
+# ~/.config subdirectory (e.g. ghostty) conflict when that directory already
+# exists with real files — stow refuses rather than overwrite it.
+backup_if_conflict() {
+  [ -L "$HOME/$1" ] && return 0       # already a symlink; stow re-stows cleanly
+  [ -e "$HOME/$1" ] || return 0       # nothing there; stow will create it
+  local backup="$HOME/$1.backup.$(date +%Y%m%d%H%M%S)"
+  echo "  Backing up existing ~/$1 -> $(basename "$backup")"
+  mv "$HOME/$1" "$backup"
+}
+
 echo "==> Checking for old symlinks..."
 remove_old_symlink ".zshrc"
 remove_old_symlink ".zshenv"
@@ -45,6 +56,9 @@ remove_old_symlink ".gitignore"
 remove_old_symlink ".zsh"
 remove_old_symlink ".vim"
 remove_old_symlink ".vimrc"
+
+echo "==> Backing up conflicting configs..."
+backup_if_conflict ".config/ghostty"
 
 # 6. Stow all packages
 packages=(zsh aliases starship git neovim tmux bin ghostty)
