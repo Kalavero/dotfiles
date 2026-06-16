@@ -23,7 +23,9 @@ Personal dotfiles for macOS development. Uses **GNU Stow** for symlink managemen
 | `neovim/` | `.config/nvim/` (Lua config, lazy.nvim plugins) |
 | `tmux/` | `.tmux.conf` (prefix Ctrl-a, vim-aware nav, TPM) |
 | `bin/` | `.local/bin/tat` (tmux attach-or-create) |
-| `ghostty/` | `.config/ghostty/config` (Gruvbox Dark, JetBrainsMono Nerd Font, option-as-alt) |
+| `ghostty/` | `.config/ghostty/config` (Gruvbox Dark, JetBrainsMono Nerd Font 14, option-as-alt) |
+
+`iterm2/` is not a stow package — it holds manual setup notes (`iterm2/README.md`) for the alternative terminal, which is configured through its GUI rather than a dotfile.
 
 ## Neovim Config Structure
 

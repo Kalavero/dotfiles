@@ -16,6 +16,8 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `ghostty/` | [Ghostty](https://ghostty.org) terminal | Gruvbox Dark, JetBrainsMono Nerd Font 14, option-as-alt |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
+> `iterm2/` is not a stow package — it holds manual setup notes ([`iterm2/README.md`](iterm2/README.md)) for the alternative terminal, which is configured through its GUI rather than a dotfile.
+
 ## Install
 
 ```bash
