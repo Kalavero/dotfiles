@@ -13,6 +13,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `git/` | Git | 60+ aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
+| `ghostty/` | [Ghostty](https://ghostty.org) terminal | Gruvbox Dark, JetBrainsMono Nerd Font 14, option-as-alt |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
 ## Install

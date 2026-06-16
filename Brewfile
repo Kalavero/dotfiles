@@ -29,3 +29,4 @@ cask "font-jetbrains-mono-nerd-font"
 
 # Apps
 cask "iterm2"
+cask "ghostty"

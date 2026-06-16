@@ -1,0 +1,17 @@
+# Theme
+theme = Gruvbox Dark
+
+# Font
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+
+# Treat left Option as Alt (matches iTerm2 "Esc+" setting)
+macos-option-as-alt = true
+
+# Skip the per-read clipboard prompt: any terminal program, including remote
+# ones via OSC 52, can read the clipboard (matches the iTerm2 setup)
+clipboard-read = allow
+clipboard-write = allow
+
+# Machine-local overrides (gitignored, optional)
+config-file = ?config.local
