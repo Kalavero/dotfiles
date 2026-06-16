@@ -34,12 +34,29 @@ Map each proposed task to a ticket:
 
 - **Title** — the task title, prefixed or labeled per the tracker's visible conventions (check a few recent tickets).
 - **Description** — the task's body from the TAD, plus a link back to the TAD document. Each ticket must be self-contained: an engineer picking it up should not need the conversation, only the ticket and the TAD link.
-- **Estimate** — carry over if the TAD includes one and the tracker supports it.
+- **Estimate** — assign a relative point estimate using the scale below. Carry over the TAD's estimate if it has one; otherwise derive it. Map the points onto the tracker's own estimate field when it has one.
 - **Dependencies** — encode the TAD's sequencing section: blocking relationships where the tracker supports them, otherwise a "Depends on: ..." line in the description.
+
+### Estimation scale
+
+Size each task on a relative-points scale that blends three things: time to deliver, complexity, and uncertainty (unknowns you'll only hit mid-work). Points are not hours — the delivery times below just anchor the scale.
+
+| Points | Delivery time | Complexity & certainty | Examples |
+|--------|---------------|------------------------|----------|
+| 0 | Minutes; many in a day | None — you know exactly what to do | CSS color change, fix a typo, flip an env var, run a data task |
+| 1 | ~An hour; several in a day | Minimal — you know exactly what to do | Add a form field, simple migration, fix a query with a spec, add a basic test |
+| 2 | Hours / half-day; ~one a day | Some — you mostly know what and where | Build a modal with form validation |
+| 3 | A day to a day and a half | Moderate, with some unknowns | New endpoint with validation and tests; a multi-step form |
+| 5 | 2–3 days | High complexity; unknowns likely surface during the work | Feature spanning several layers, introducing a new pattern |
+| 8 | ~A week | High complexity; critical unknowns | Too big — split before it becomes a ticket |
+
+Rules:
+- An 8 must be broken into smaller tasks before it becomes a ticket — flag it, don't create it as-is. A 5 is large; split it when you reasonably can.
+- When torn between two values, take the higher one and note the uncertainty in the ticket.
 
 ## Phase 4 — Confirm, then create
 
-Present the complete ticket list (titles, descriptions, dependencies) for review.
+Present the complete ticket list (titles, descriptions, estimates, dependencies) for review.
 
 **Do not create anything until the user explicitly approves the full list.** This is a hard requirement — ticket creation is outward-facing and noisy to undo.
 
