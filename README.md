@@ -156,6 +156,9 @@ Commands are typed explicitly (`/kalavero:<name>`) to kick off a workflow:
 | `/kalavero:pr-create` | Draft a PR using the repo's template and ticket-linking conventions |
 | `/kalavero:plan` | Break work into small verifiable tasks with acceptance criteria |
 | `/kalavero:build` | Implement the next planned task — test, verify, commit |
+| `/kalavero:green` | Drive the test suite to green — run, diagnose, fix, re-run until passing |
+| `/kalavero:ci-watch` | Watch the branch's CI run and fix failures until it goes green |
+| `/kalavero:babysit-prs` | Check open PRs for blockers (CI, reviews, conflicts, ready-to-merge); loopable |
 | `/kalavero:why` | Explain why code exists by tracing commits, PRs, and tickets |
 | `/kalavero:standup` | Summarize recent commits, PRs, and ticket movement into standup notes |
 | `/kalavero:release-notes` | Generate a changelog from merged PRs since the last release |
