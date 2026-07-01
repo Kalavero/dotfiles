@@ -31,8 +31,9 @@ The install script will:
 2. Install all dependencies from the `Brewfile`, including Node.js
 3. Install [Pi](https://pi.dev/) and [OpenCode](https://opencode.ai/)
 4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
-5. Stow all packages (symlink configs to `$HOME`)
-6. Set Zsh as the default shell
+5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets into the tool-specific locations they scan
+6. Stow all packages (symlink configs to `$HOME`)
+7. Set Zsh as the default shell
 
 After install, open Neovim — plugins will auto-install on first launch.
 In tmux, press `Ctrl-a I` to install tmux plugins.
@@ -177,6 +178,7 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `migration-safety` | Writing or reviewing database migrations |
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `dotfiles-package` | Adding or restructuring config in this repo |
+| `skill-creator` | Creating, testing, and refining new skills |
 | `planning-and-task-breakdown`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
 ### Agents
