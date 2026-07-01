@@ -39,3 +39,9 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 - Prefer the smallest practical verification step for the change.
 - For dotfile changes, confirm the affected package still stows cleanly.
 - For shell or install changes, sanity-check the relevant command or script.
+
+## Shared AI Workflow
+
+- The `plugins/kalavero/` package is the source of truth for the repo's Claude/OpenCode/Pi workflow assets.
+- `install.sh` publishes those assets into the user locations each tool scans: Claude Code (`~/.claude`), OpenCode (`~/.agents` and `~/.config/opencode`), Pi (`~/.pi/agent`), and Codex (`~/.codex` plus this repo's `AGENTS.md`).
+- When editing a command, agent, or skill, keep the plugin package and the published locations aligned.

@@ -57,6 +57,23 @@ backup_if_conflict() {
   mv "$HOME/$1" "$backup"
 }
 
+link_if_needed() {
+  local source="$DOTFILES_DIR/$1"
+  local target="$HOME/$2"
+
+  if [ -L "$target" ]; then
+    [ "$(readlink "$target")" = "$source" ] && return 0
+    rm "$target"
+  elif [ -e "$target" ]; then
+    local backup="$target.backup.$(date +%Y%m%d%H%M%S)"
+    echo "  Backing up existing ~/$2 -> $(basename "$backup")"
+    mv "$target" "$backup"
+  fi
+
+  mkdir -p "$(dirname "$target")"
+  ln -s "$source" "$target"
+}
+
 echo "==> Checking for old symlinks..."
 remove_old_symlink ".zshrc"
 remove_old_symlink ".zshenv"
@@ -71,7 +88,29 @@ remove_old_symlink ".vimrc"
 echo "==> Backing up conflicting configs..."
 backup_if_conflict ".config/ghostty"
 
-# 7. Stow all packages
+# 7. Publish shared AI workflow assets
+echo "==> Linking shared AI workflow assets..."
+link_if_needed "plugins/kalavero/commands" ".claude/commands"
+link_if_needed "plugins/kalavero/skills" ".claude/skills"
+link_if_needed "plugins/kalavero/agents" ".claude/agents"
+
+link_if_needed "plugins/kalavero/commands" ".agents/commands"
+link_if_needed "plugins/kalavero/skills" ".agents/skills"
+link_if_needed "plugins/kalavero/agents" ".agents/agents"
+
+link_if_needed "plugins/kalavero/commands" ".config/opencode/commands"
+link_if_needed "plugins/kalavero/skills" ".config/opencode/skills"
+link_if_needed "plugins/kalavero/agents" ".config/opencode/agents"
+
+link_if_needed "plugins/kalavero/commands" ".pi/agent/prompts"
+link_if_needed "plugins/kalavero/skills" ".pi/agent/skills"
+
+link_if_needed "AGENTS.md" ".codex/AGENTS.md"
+link_if_needed "plugins/kalavero/commands" ".codex/commands"
+link_if_needed "plugins/kalavero/skills" ".codex/skills"
+link_if_needed "plugins/kalavero/agents" ".codex/agents"
+
+# 8. Stow all packages
 packages=(zsh aliases starship git neovim tmux bin ghostty)
 echo "==> Stowing packages..."
 for pkg in "${packages[@]}"; do
@@ -81,7 +120,7 @@ for pkg in "${packages[@]}"; do
   fi
 done
 
-# 8. Set Zsh as default shell
+# 9. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   echo "==> Setting Zsh as default shell..."
   chsh -s "$(which zsh)"

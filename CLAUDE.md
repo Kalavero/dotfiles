@@ -46,7 +46,7 @@ Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> n
 ## Install & Build
 
 ```bash
-./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, clones TPM, stows all packages, sets zsh as default shell
+./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, syncs shared Claude/OpenCode/Pi/Codex assets, clones TPM, stows all packages, sets zsh as default shell
 brew bundle         # Just the Homebrew packages
 stow <package>      # Stow a single package
 stow -D <package>   # Unstow (remove symlinks)
