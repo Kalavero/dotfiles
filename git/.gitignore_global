@@ -32,3 +32,5 @@ Session.vim
 
 # SASS
 .sass-cache
+
+**/.claude/settings.local.json
