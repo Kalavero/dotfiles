@@ -28,10 +28,11 @@ cd ~/kalavero_dotfiles
 
 The install script will:
 1. Install [Homebrew](https://brew.sh) if needed
-2. Install all dependencies from the `Brewfile`
-3. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
-4. Stow all packages (symlink configs to `$HOME`)
-5. Set Zsh as the default shell
+2. Install all dependencies from the `Brewfile`, including Node.js
+3. Install [Pi](https://pi.dev/) and [OpenCode](https://opencode.ai/)
+4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
+5. Stow all packages (symlink configs to `$HOME`)
+6. Set Zsh as the default shell
 
 After install, open Neovim — plugins will auto-install on first launch.
 In tmux, press `Ctrl-a I` to install tmux plugins.

@@ -24,6 +24,9 @@ brew "openssl"
 # Build tools (needed by some Neovim plugins)
 brew "cmake"
 
+# JavaScript runtime (for Pi)
+brew "node"
+
 # Fonts
 cask "font-jetbrains-mono-nerd-font"
 

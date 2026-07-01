@@ -46,7 +46,7 @@ Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> n
 ## Install & Build
 
 ```bash
-./install.sh        # Installs Homebrew deps (Brewfile), clones TPM, stows all packages, sets zsh as default shell
+./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, clones TPM, stows all packages, sets zsh as default shell
 brew bundle         # Just the Homebrew packages
 stow <package>      # Stow a single package
 stow -D <package>   # Unstow (remove symlinks)
@@ -54,4 +54,4 @@ stow -D <package>   # Unstow (remove symlinks)
 
 ## Tech Stack
 
-Zsh + Starship prompt, Neovim (Lua), Tmux + TPM, Git. Ruby (rvm) + Node.js (nvm). Dev tools: RSpec, Rubocop, ESLint, Prettier.
+Zsh + Starship prompt, Neovim (Lua), Tmux + TPM, Git. Ruby (rvm) + Node.js (brew/nvm). AI tools: Pi, OpenCode. Dev tools: RSpec, Rubocop, ESLint, Prettier.

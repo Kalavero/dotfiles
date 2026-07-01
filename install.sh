@@ -18,16 +18,27 @@ fi
 echo "==> Installing Homebrew packages..."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 
-# 3. Clone TPM (Tmux Plugin Manager) if needed
+# 3. Install AI coding tools
+if ! command -v pi &>/dev/null; then
+  echo "==> Installing Pi..."
+  npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+fi
+
+if ! command -v opencode &>/dev/null; then
+  echo "==> Installing OpenCode..."
+  curl -fsSL https://opencode.ai/install | bash
+fi
+
+# 4. Clone TPM (Tmux Plugin Manager) if needed
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   echo "==> Installing Tmux Plugin Manager..."
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-# 4. Create undo directory for Neovim
+# 5. Create undo directory for Neovim
 mkdir -p "$HOME/.config/nvim/undodir"
 
-# 5. Remove old symlinks that would conflict with stow
+# 6. Remove old symlinks that would conflict with stow
 remove_old_symlink() {
   if [ -L "$HOME/$1" ]; then
     echo "  Removing old symlink: ~/$1"
@@ -60,7 +71,7 @@ remove_old_symlink ".vimrc"
 echo "==> Backing up conflicting configs..."
 backup_if_conflict ".config/ghostty"
 
-# 6. Stow all packages
+# 7. Stow all packages
 packages=(zsh aliases starship git neovim tmux bin ghostty)
 echo "==> Stowing packages..."
 for pkg in "${packages[@]}"; do
@@ -70,7 +81,7 @@ for pkg in "${packages[@]}"; do
   fi
 done
 
-# 7. Set Zsh as default shell
+# 8. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   echo "==> Setting Zsh as default shell..."
   chsh -s "$(which zsh)"
