@@ -57,6 +57,42 @@ backup_if_conflict() {
   mv "$HOME/$1" "$backup"
 }
 
+prompt_terminal_font() {
+  local font_choice
+
+  echo "==> Choose your terminal font:"
+  PS3="Select 1 or 2: "
+  select font_choice in "Hack Nerd Font" "JetBrainsMono Nerd Font"; do
+    case "$REPLY" in
+      1|2)
+        printf '%s\n' "$font_choice"
+        return 0
+        ;;
+      *)
+        echo "Please enter 1 or 2."
+        ;;
+    esac
+  done
+}
+
+write_ghostty_font_override() {
+  local font_family="$1"
+  local override="$HOME/.config/ghostty.local"
+
+  mkdir -p "$(dirname "$override")"
+
+  if [ -e "$override" ] && [ ! -L "$override" ]; then
+    local backup="$override.backup.$(date +%Y%m%d%H%M%S)"
+    echo "  Backing up existing ~/.config/ghostty.local -> $(basename "$backup")"
+    mv "$override" "$backup"
+  fi
+
+  cat >"$override" <<EOF
+# Machine-specific override written by install.sh
+font-family = $font_family
+EOF
+}
+
 link_if_needed() {
   local source="$DOTFILES_DIR/$1"
   local target="$HOME/$2"
@@ -87,6 +123,8 @@ remove_old_symlink ".vimrc"
 
 echo "==> Backing up conflicting configs..."
 backup_if_conflict ".config/ghostty"
+
+terminal_font="$(prompt_terminal_font)"
 
 # 7. Publish shared AI workflow assets
 echo "==> Linking shared AI workflow assets..."
@@ -120,6 +158,8 @@ for pkg in "${packages[@]}"; do
   fi
 done
 
+write_ghostty_font_override "$terminal_font"
+
 # 9. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   echo "==> Setting Zsh as default shell..."
@@ -129,6 +169,6 @@ fi
 echo ""
 echo "==> Done! Next steps:"
 echo "  1. Open a new terminal to apply changes"
-echo "  2. Set iTerm2 font to JetBrainsMono Nerd Font (Ghostty is configured automatically)"
+echo "  2. Set iTerm2 font to $terminal_font (Ghostty is configured automatically)"
 echo "  3. Open nvim — plugins will auto-install on first launch"
 echo "  4. In tmux, press Ctrl-a + I to install tmux plugins"

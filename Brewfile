@@ -29,6 +29,7 @@ brew "cmake"
 brew "node"
 
 # Fonts
+cask "font-hack-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
 
 # Apps

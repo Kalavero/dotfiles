@@ -13,7 +13,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `git/` | Git | 60+ aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
-| `ghostty/` | [Ghostty](https://ghostty.org) terminal | Gruvbox Dark, JetBrainsMono Nerd Font 14, option-as-alt |
+| `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, Hack Nerd Font 14, option-as-alt, 0.8 opacity, blur 50 |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
 > `iterm2/` is not a stow package — it holds manual setup notes ([`iterm2/README.md`](iterm2/README.md)) for the alternative terminal, which is configured through its GUI rather than a dotfile.
@@ -34,6 +34,8 @@ The install script will:
 5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets into the tool-specific locations they scan
 6. Stow all packages (symlink configs to `$HOME`)
 7. Set Zsh as the default shell
+
+The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
 
 After install, open Neovim — plugins will auto-install on first launch.
 In tmux, press `Ctrl-a I` to install tmux plugins.
