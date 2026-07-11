@@ -7,6 +7,7 @@ brew "zsh-syntax-highlighting"
 
 # Editor
 brew "neovim"
+brew "tree-sitter-cli"  # required by nvim-treesitter (main branch) to compile parsers
 
 # Search & File Tools
 brew "ripgrep"
