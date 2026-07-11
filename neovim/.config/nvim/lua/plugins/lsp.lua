@@ -39,10 +39,25 @@ return {
       })
 
       -- Configure LSP servers (Neovim 0.11+ vim.lsp.config)
-      vim.lsp.config("ts_ls", {})
-      vim.lsp.config("eslint", {})
-      vim.lsp.config("ruby_lsp", {})
+      vim.lsp.config("ts_ls", {
+        cmd = { "typescript-language-server", "--stdio" },
+        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+        root_markers = { "package.json", "tsconfig.json", "jsconfig.json", ".git" },
+      })
+      vim.lsp.config("eslint", {
+        cmd = { "vscode-eslint-language-server", "--stdio" },
+        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "svelte" },
+        root_markers = { "package.json", ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".git" },
+      })
+      vim.lsp.config("ruby_lsp", {
+        cmd = { "ruby-lsp" },
+        filetypes = { "ruby" },
+        root_markers = { "Gemfile", ".git" },
+      })
       vim.lsp.config("lua_ls", {
+        cmd = { "lua-language-server" },
+        filetypes = { "lua" },
+        root_markers = { ".luarc.json", ".luarc.jsonc", ".stylua.toml", ".git" },
         settings = {
           Lua = {
             runtime = { version = "LuaJIT" },
