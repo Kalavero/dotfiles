@@ -1,8 +1,12 @@
 # Theme
-theme = Gruvbox Dark
+theme = Rose Pine Moon
+
+# Window
+background-opacity = 0.8
+background-blur = 50
 
 # Font
-font-family = JetBrainsMono Nerd Font
+font-family = Hack Nerd Font
 font-size = 14
 
 # Treat left Option as Alt (matches iTerm2 "Esc+" setting)
@@ -13,5 +17,5 @@ macos-option-as-alt = true
 clipboard-read = allow
 clipboard-write = allow
 
-# Machine-local overrides (gitignored, optional)
-config-file = ?config.local
+# Machine-local overrides (optional)
+config-file = ?../ghostty.local

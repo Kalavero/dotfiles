@@ -22,7 +22,7 @@ All notable changes to these dotfiles are documented here.
   - **Agents**: `researcher`, `planner`, `implementer`, `test-engineer`, and
     `code-reviewer`, coordinated by `/kalavero:implement` (research → plan →
     build/test/review loop with human approval gates).
-- **Ghostty terminal stow package** — Gruvbox Dark, JetBrainsMono Nerd Font 14,
+- **Ghostty terminal stow package** — Rose Pine Moon, Hack Nerd Font 14, 0.8 opacity, blur 50,
   option-as-alt, and clipboard access matching the iTerm2 setup, with an optional
   gitignored `config.local` for machine-local overrides (#1).
 - **bun** added to the zsh `PATH` with completions.
