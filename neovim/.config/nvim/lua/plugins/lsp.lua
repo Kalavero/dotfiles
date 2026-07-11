@@ -12,7 +12,6 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = {
           "ts_ls",
-          "eslint",
           "ruby_lsp",
           "lua_ls",
         },
@@ -44,11 +43,6 @@ return {
         filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
         root_markers = { "package.json", "tsconfig.json", "jsconfig.json", ".git" },
       })
-      vim.lsp.config("eslint", {
-        cmd = { "vscode-eslint-language-server", "--stdio" },
-        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "svelte" },
-        root_markers = { "package.json", ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".git" },
-      })
       vim.lsp.config("ruby_lsp", {
         cmd = { "ruby-lsp" },
         filetypes = { "ruby" },
@@ -68,7 +62,7 @@ return {
         },
       })
 
-      vim.lsp.enable({ "ts_ls", "eslint", "ruby_lsp", "lua_ls" })
+      vim.lsp.enable({ "ts_ls", "ruby_lsp", "lua_ls" })
     end,
   },
 }
