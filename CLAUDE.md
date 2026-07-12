@@ -24,6 +24,7 @@ Personal dotfiles for macOS development. Uses **GNU Stow** for symlink managemen
 | `tmux/` | `.tmux.conf` (prefix Ctrl-a, vim-aware nav, TPM) |
 | `bin/` | `.local/bin/tat` (tmux attach-or-create) |
 | `ghostty/` | `.config/ghostty/config` (Rose Pine Moon, Hack Nerd Font 14, option-as-alt, 0.8 opacity, blur 50; installer can switch to JetBrainsMono Nerd Font) |
+| `herdr/` | `.config/herdr/config.toml` (Ctrl-a prefix, tmux-like pane/tab bindings) |
 
 `iterm2/` is not a stow package — it holds manual setup notes (`iterm2/README.md`) for the alternative terminal, which is configured through its GUI rather than a dotfile.
 
