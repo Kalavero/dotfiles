@@ -11,4 +11,7 @@
 .tmux.conf.local
 .vimrc.local
 ghostty/.config/ghostty/config.local
+herdr/.config/herdr/*.log
+herdr/.config/herdr/*.sock
+herdr/.config/herdr/session.json
 tasks/

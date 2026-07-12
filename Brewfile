@@ -33,5 +33,6 @@ cask "font-hack-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
 
 # Apps
+brew "herdr"
 cask "iterm2"
 cask "ghostty"

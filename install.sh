@@ -123,6 +123,7 @@ remove_old_symlink ".vimrc"
 
 echo "==> Backing up conflicting configs..."
 backup_if_conflict ".config/ghostty"
+backup_if_conflict ".config/herdr"
 
 terminal_font="$(prompt_terminal_font)"
 
@@ -149,7 +150,7 @@ link_if_needed "plugins/kalavero/skills" ".codex/skills"
 link_if_needed "plugins/kalavero/agents" ".codex/agents"
 
 # 8. Stow all packages
-packages=(zsh aliases starship git neovim tmux bin ghostty)
+packages=(zsh aliases starship git neovim tmux bin ghostty herdr)
 echo "==> Stowing packages..."
 for pkg in "${packages[@]}"; do
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
@@ -170,5 +171,6 @@ echo ""
 echo "==> Done! Next steps:"
 echo "  1. Open a new terminal to apply changes"
 echo "  2. Set iTerm2 font to $terminal_font (Ghostty is configured automatically)"
-echo "  3. Open nvim — plugins will auto-install on first launch"
-echo "  4. In tmux, press Ctrl-a + I to install tmux plugins"
+echo "  3. Start herdr from any project directory (Ctrl-a ? shows bindings)"
+echo "  4. Open nvim — plugins will auto-install on first launch"
+echo "  5. In tmux, press Ctrl-a + I to install tmux plugins"
