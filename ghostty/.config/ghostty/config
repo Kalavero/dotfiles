@@ -4,6 +4,7 @@ theme = Rose Pine Moon
 # Window
 background-opacity = 0.8
 background-blur = 50
+background-opacity-cells = true
 
 # Font
 font-family = Hack Nerd Font

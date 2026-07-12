@@ -14,6 +14,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
 | `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, Hack Nerd Font 14, option-as-alt, 0.8 opacity, blur 50 |
+| `herdr/` | [Herdr](https://herdr.dev) agent multiplexer | Ctrl-a prefix, tmux-like pane/tab bindings |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
 > `iterm2/` is not a stow package — it holds manual setup notes ([`iterm2/README.md`](iterm2/README.md)) for the alternative terminal, which is configured through its GUI rather than a dotfile.
@@ -36,6 +37,7 @@ The install script will:
 7. Set Zsh as the default shell
 
 The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
+It installs Herdr and stows `~/.config/herdr/config.toml` with tmux-style keybindings.
 
 After install, open Neovim — plugins will auto-install on first launch.
 In tmux, press `Ctrl-a I` to install tmux plugins.
