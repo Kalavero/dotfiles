@@ -2,10 +2,10 @@
 prefix = "ctrl+a"
 
 # tmux muscle memory
-focus_pane_left = "ctrl+h"
-focus_pane_down = "ctrl+j"
-focus_pane_up = "ctrl+k"
-focus_pane_right = "ctrl+l"
+focus_pane_left = ["ctrl+h", "ctrl+left"]
+focus_pane_down = ["ctrl+j", "ctrl+down"]
+focus_pane_up = ["ctrl+k", "ctrl+up"]
+focus_pane_right = ["ctrl+l", "ctrl+right"]
 split_vertical = "prefix+v"
 split_horizontal = "prefix+s"
 new_tab = "prefix+c"
