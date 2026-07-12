@@ -33,7 +33,7 @@ The install script will:
 3. Install [Pi](https://pi.dev/) and [OpenCode](https://opencode.ai/)
 4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
 5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets into the tool-specific locations they scan
-6. Stow all packages (symlink configs to `$HOME`)
+6. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)
 7. Set Zsh as the default shell
 
 The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.

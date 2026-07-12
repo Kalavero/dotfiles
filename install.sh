@@ -144,13 +144,13 @@ link_if_needed "plugins/kalavero/agents" ".config/opencode/agents"
 link_if_needed "plugins/kalavero/commands" ".pi/agent/prompts"
 link_if_needed "plugins/kalavero/skills" ".pi/agent/skills"
 
-link_if_needed "AGENTS.md" ".codex/AGENTS.md"
+link_if_needed "home/AGENTS.md" ".codex/AGENTS.md"
 link_if_needed "plugins/kalavero/commands" ".codex/commands"
 link_if_needed "plugins/kalavero/skills" ".codex/skills"
 link_if_needed "plugins/kalavero/agents" ".codex/agents"
 
 # 8. Stow all packages
-packages=(zsh aliases starship git neovim tmux bin ghostty herdr)
+packages=(home zsh aliases starship git neovim tmux bin ghostty herdr)
 echo "==> Stowing packages..."
 for pkg in "${packages[@]}"; do
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
