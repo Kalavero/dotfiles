@@ -32,9 +32,17 @@ The install script will:
 2. Install all dependencies from the `Brewfile`, including Node.js
 3. Install [Pi](https://pi.dev/) and [OpenCode](https://opencode.ai/)
 4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
-5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets into the tool-specific locations they scan
+5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets and the global agent instructions file into the tool-specific locations they scan
 6. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)
 7. Set Zsh as the default shell
+
+### Sync Changes
+
+```bash
+./sync.sh
+```
+
+Reapplies tracked symlinks and stows packages without reinstalling dependencies.
 
 The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
 It installs Herdr and stows `~/.config/herdr/config.toml` with tmux-style keybindings.
