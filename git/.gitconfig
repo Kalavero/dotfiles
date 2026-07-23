@@ -88,6 +88,10 @@
   prompt = false
 [mergetool "nvimdiff"]
   cmd = "nvim -d $MERGED"
+[difftool]
+  prompt = false
+[difftool "nvimdiff"]
+  cmd = "nvim -d $LOCAL $REMOTE"
 [merge]
   summary = true
   verbosity = 1

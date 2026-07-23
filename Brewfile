@@ -17,7 +17,6 @@ brew "fzf"
 # Git
 brew "git"
 brew "gh"
-brew "hunk"
 
 # Ruby development
 brew "libyaml"

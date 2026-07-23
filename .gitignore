@@ -13,5 +13,6 @@
 ghostty/.config/ghostty/config.local
 herdr/.config/herdr/*.log
 herdr/.config/herdr/*.sock
+herdr/.config/herdr/.plugins.lock
 herdr/.config/herdr/session.json
 tasks/
