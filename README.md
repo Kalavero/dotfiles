@@ -42,7 +42,7 @@ The install script will:
 ./sync.sh
 ```
 
-Reapplies tracked symlinks and stows packages without reinstalling dependencies.
+Reapplies tracked symlinks and stows packages without reinstalling dependencies. It also defaults subagents to lower-cost models: Haiku in Claude Code and GPT-5.6 Terra in OpenCode and Codex. Existing explicit harness overrides are preserved. Pi has no built-in subagents, so no Pi model override is generated.
 
 The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
 It installs Herdr and stows `~/.config/herdr/config.toml` with tmux-style keybindings.
