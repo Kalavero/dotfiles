@@ -4,6 +4,7 @@ brew "tmux"
 brew "starship"
 brew "stow"
 brew "zsh-syntax-highlighting"
+brew "shellcheck"
 
 # Editor
 brew "neovim"
@@ -25,8 +26,9 @@ brew "openssl"
 # Build tools (needed by some Neovim plugins)
 brew "cmake"
 
-# JavaScript runtime (for Pi)
+# Runtime dependencies
 brew "node"
+brew "python"
 
 # Fonts
 cask "font-hack-nerd-font"

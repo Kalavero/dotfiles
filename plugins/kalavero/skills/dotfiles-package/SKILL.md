@@ -12,8 +12,8 @@ How configuration is organized in this repo so changes land in the right place a
 
 ## The rules
 
-- **Every top-level directory is a GNU Stow package** whose internal structure mirrors `$HOME`. A file destined for `~/.config/foo/bar.toml` lives at `<package>/.config/foo/bar.toml`. Run `stow <package>` from the repo root to symlink it.
-- **New tool config goes in an existing package when it belongs to that tool's domain** (a zsh function → `zsh/`, an alias → `aliases/`); create a new package only for a genuinely new tool with its own config tree. When creating one, add it to the package table in `CLAUDE.md` and to the stow loop in `install.sh`.
+- **Stow packages are registered in `stow-packages.txt`** and their internal structure mirrors `$HOME`. A file destined for `~/.config/foo/bar.toml` lives at `<package>/.config/foo/bar.toml`. Run `stow <package>` from the repo root to symlink it.
+- **New tool config goes in an existing package when it belongs to that tool's domain** (a zsh function → `zsh/`, an alias → `aliases/`); create a new package only for a genuinely new tool with its own config tree. When creating one, add it to `stow-packages.txt` and to the package tables in `README.md` and `CLAUDE.md`.
 - **Machine-specific settings use the `.local` pattern**: the stowed file sources a gitignored `.local` counterpart (`.zshrc.local`, `.aliases.local`, `.gitconfig.local`, `.tmux.conf.local`). Anything machine- or job-specific belongs there, never in the repo.
 - **Secrets go in `~/.secrets`** (gitignored, sourced by zshrc). Never commit tokens, even temporarily.
 - **Nothing employer-specific in the repo** — no company names, team ticket prefixes, or configs that only make sense at one job. That content belongs in `.local` files.

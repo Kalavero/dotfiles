@@ -6,6 +6,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 
 | Package | Tool | Config |
 |---------|------|--------|
+| `home/` | Shared agent instructions | Global `~/AGENTS.md` used by supported AI tools |
 | `zsh/` | Zsh + [Starship](https://starship.rs) prompt | Vi mode, history, autocd, syntax highlighting |
 | `aliases/` | Shell aliases | Git, Docker, Ruby/Rails, file navigation |
 | `neovim/` | Neovim (Lua) | [lazy.nvim](https://github.com/folke/lazy.nvim), Gruvbox, Telescope, LSP, Treesitter |
@@ -43,6 +44,8 @@ The install script will:
 ```
 
 Reapplies tracked symlinks and stows packages without reinstalling dependencies. It also defaults subagents to lower-cost models: Haiku in Claude Code and GPT-5.6 Terra in OpenCode and Codex. Existing explicit harness overrides are preserved. Pi has no built-in subagents, so no Pi model override is generated.
+
+Use `./sync.sh --dry-run` to preview changes. For isolated verification, `./sync.sh --target-home /absolute/path` publishes into an existing temporary home instead of your real home directory. The packages to stow are defined once in `stow-packages.txt`.
 
 The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
 It installs Herdr and stows `~/.config/herdr/config.toml` with tmux-style keybindings.
@@ -145,11 +148,14 @@ Override any config locally without touching tracked files:
 | `~/.zshenv.local` | Extra env vars |
 | `~/.gitconfig.local` | Git user, signing, etc. |
 | `~/.tmux.conf.local` | Extra tmux config |
+| `~/.config/ghostty.local` | Machine-specific Ghostty settings |
 | `~/.secrets` | API keys, tokens |
 
-## AI Workflow (Claude Code)
+## AI Workflow
 
 The repo doubles as a [Claude Code](https://claude.com/claude-code) plugin marketplace. The `kalavero` plugin at `plugins/kalavero/` packages personal engineering workflows as commands, skills, and agents. Nothing in it is tied to a specific employer or vendor — trackers, PR templates, and branch conventions are discovered at runtime from whatever repo and MCP servers are available.
+
+The same source assets are published by `sync.sh` for Claude Code, OpenCode, Pi, and Codex. Claude and OpenCode agent files are generated because their frontmatter formats differ; generated files contain an ownership marker and should not be edited directly.
 
 ### Setup
 
@@ -209,10 +215,27 @@ Agents are specialized subagent personas, launched individually or coordinated b
 
 ## Testing with Docker
 
+Run the repository checks before syncing changes into your real home:
+
+```bash
+./script/check
+```
+
+The check command validates shell syntax, package and documentation consistency, plugin metadata, agent generation, Codex configuration updates, and a full sync against a temporary home. Install the Python strict-check dependency with `python3 -m venv .venv && .venv/bin/python3 -m pip install -r requirements-dev.txt`; the check script detects that virtual environment automatically. CI runs `./script/check --strict`.
+
+The Docker image provides a separate Linux Stow smoke test using the same `stow-packages.txt` registry:
+
 ```bash
 docker build -t kalavero-dotfiles .
 docker run -it kalavero-dotfiles
 ```
+
+### Workflow asset maintenance
+
+- Update vendored `.system` skill directories as complete upstream units, including their license and attribution files.
+- Run `./script/check --strict` after changing commands, agents, skills, manifests, or generated-output rules.
+- Advance the plugin manifest version only as part of an explicit plugin release.
+- Treat `CHANGELOG.md` as release-owned documentation, not a file for routine configuration changes.
 
 ## Credits
 
