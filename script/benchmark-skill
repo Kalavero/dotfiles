@@ -68,6 +68,15 @@ if [ ! -d "$TASK_ROOT" ]; then
   exit 2
 fi
 
+if [ -f "$REPO_DIR/skills/$SKILL/SKILL.md" ]; then
+  TARGET_SKILL_DIR="$REPO_DIR/skills/$SKILL"
+elif [ -f "$REPO_DIR/plugins/kalavero/skills/$SKILL/SKILL.md" ]; then
+  TARGET_SKILL_DIR="$REPO_DIR/plugins/kalavero/skills/$SKILL"
+else
+  echo "no local or shared skill found for: $SKILL" >&2
+  exit 2
+fi
+
 TASKS=()
 while IFS= read -r task; do
   TASKS+=("$task")
@@ -100,17 +109,22 @@ trap cleanup EXIT
 prepare_skills() {
   local variant="$1"
   local destination="$2"
-  local source name
+  local source name target_name
 
   mkdir -p "$destination"
+  target_name="$(basename "$TARGET_SKILL_DIR")"
   for source in "$REPO_DIR"/plugins/kalavero/skills/*; do
-    [ -d "$source" ] || continue
+    [ -f "$source/SKILL.md" ] || continue
     name="$(basename "$source")"
-    if [ "$variant" = control ] && [ "$name" = "$SKILL" ]; then
+    if [ "$variant" = control ] && [ "$name" = "$target_name" ]; then
       continue
     fi
     ln -s "$source" "$destination/$name"
   done
+
+  if [ "$variant" = treatment ] && [ ! -e "$destination/$target_name" ]; then
+    ln -s "$TARGET_SKILL_DIR" "$destination/$target_name"
+  fi
 }
 
 run_trial() {

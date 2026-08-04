@@ -57,7 +57,7 @@ assert result["skill"] == "dotfiles-package"
 assert [(trial["variant"], trial["passed"]) for trial in result["trials"]] == [
     ("control", False),
     ("treatment", True),
-]
+], result
 PY
 
 pass 'skill benchmark runs paired isolated trials and records objective results'

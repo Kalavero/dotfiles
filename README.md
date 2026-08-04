@@ -200,7 +200,7 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `refactor-plan` | Restructuring code where changing behavior is the main risk |
 | `migration-safety` | Writing or reviewing database migrations |
 | `flaky-spec` | A test fails intermittently or only in CI |
-| `dotfiles-package` | Adding or restructuring config in this repo |
+| `skill-benchmark` | Measuring whether an AI coding skill improves outcomes |
 | `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
 ### Agents

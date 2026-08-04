@@ -41,6 +41,10 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 - For shell or install changes, sanity-check the relevant command or script.
 - Run `./script/check` for changes to synchronization, packages, or shared AI workflow assets.
 
+## Repository-local skills
+
+- Before adding, moving, or restructuring dotfile configuration, read `skills/dotfiles-package/SKILL.md`.
+
 ## Shared AI Workflow
 
 - The `plugins/kalavero/` package is the source of truth for the repo's Claude/OpenCode/Pi workflow assets.
