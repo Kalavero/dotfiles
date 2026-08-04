@@ -16,8 +16,11 @@ COPY . /root/kalavero_dotfiles
 
 WORKDIR /root/kalavero_dotfiles
 
-# Stow all packages
-RUN stow -v -t /root zsh aliases starship git neovim tmux bin
+# Stow all packages from the same registry used by sync.sh
+RUN while IFS= read -r package || [ -n "$package" ]; do \
+      [ -n "$package" ] || continue; \
+      stow -v -t /root "$package"; \
+    done < stow-packages.txt
 
 # Install TPM
 RUN git clone https://github.com/tmux-plugins/tpm /root/.tmux/plugins/tpm

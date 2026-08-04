@@ -1,5 +1,6 @@
 .DS_Store
 .claude/
+.venv/
 *.swp
 *.swo
 *~
@@ -15,4 +16,5 @@ herdr/.config/herdr/*.log
 herdr/.config/herdr/*.sock
 herdr/.config/herdr/.plugins.lock
 herdr/.config/herdr/session.json
+herdr/.config/herdr/release-notes.json
 tasks/

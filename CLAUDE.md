@@ -16,6 +16,7 @@ Personal dotfiles for macOS development. Uses **GNU Stow** for symlink managemen
 
 | Package | What it configures |
 |---------|--------------------|
+| `home/` | `AGENTS.md` (global instructions published to supported AI tools) |
 | `zsh/` | `.zshrc`, `.zshenv`, `.zsh/` (functions, completions) |
 | `aliases/` | `.aliases` (git, docker, ruby/rails, file nav, macOS) |
 | `starship/` | `.config/starship.toml` (prompt theme) |
@@ -48,10 +49,14 @@ Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> n
 
 ```bash
 ./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, syncs shared Claude/OpenCode/Pi/Codex assets, clones TPM, stows all packages, sets zsh as default shell
+./script/check      # Validates scripts, manifests, package docs, and an isolated end-to-end sync
+./sync.sh --dry-run # Previews publishing and stow changes without writing them
 brew bundle         # Just the Homebrew packages
 stow <package>      # Stow a single package
 stow -D <package>   # Unstow (remove symlinks)
 ```
+
+The canonical Stow package list is `stow-packages.txt`. Update that registry when adding or removing a package; synchronization, Docker validation, and documentation checks consume it.
 
 ## Tech Stack
 

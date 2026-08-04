@@ -1,0 +1,10 @@
+home
+zsh
+aliases
+starship
+git
+neovim
+tmux
+bin
+ghostty
+herdr

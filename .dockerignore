@@ -1,0 +1,12 @@
+.git
+.github
+.claude
+.ruby-lsp
+.DS_Store
+.venv
+tasks
+test
+requirements-dev.txt
+*.backup.*
+*.local
+.secrets

@@ -7,11 +7,29 @@ cd "$DOTFILES_DIR"
 echo "==> Kalavero Dotfiles Installer"
 echo ""
 
+load_homebrew_environment() {
+  local brew_executable
+
+  if command -v brew &>/dev/null; then
+    return 0
+  fi
+
+  for brew_executable in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$brew_executable" ]; then
+      eval "$($brew_executable shellenv)"
+      return 0
+    fi
+  done
+
+  echo "Homebrew was installed but its executable could not be found." >&2
+  return 1
+}
+
 # 1. Install Homebrew if needed
 if ! command -v brew &>/dev/null; then
   echo "==> Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  load_homebrew_environment
 fi
 
 # 2. Install packages from Brewfile
@@ -63,7 +81,8 @@ write_ghostty_font_override() {
   mkdir -p "$(dirname "$override")"
 
   if [ -e "$override" ] && [ ! -L "$override" ]; then
-    local backup="$override.backup.$(date +%Y%m%d%H%M%S)"
+    local backup
+    backup="$override.backup.$(date +%Y%m%d%H%M%S)"
     echo "  Backing up existing ~/.config/ghostty.local -> $(basename "$backup")"
     mv "$override" "$backup"
   fi
@@ -81,10 +100,16 @@ terminal_font="$(prompt_terminal_font)"
 # 7. Apply machine-specific Ghostty font override
 write_ghostty_font_override "$terminal_font"
 
-# 9. Set Zsh as default shell
+# 8. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
-  echo "==> Setting Zsh as default shell..."
-  chsh -s "$(which zsh)"
+  desired_shell="/bin/zsh"
+  if [ -x "$desired_shell" ] && grep -Fxq "$desired_shell" /etc/shells; then
+    echo "==> Setting Zsh as default shell..."
+    chsh -s "$desired_shell"
+  else
+    echo "==> Skipping default shell change: $desired_shell is not listed in /etc/shells" >&2
+    echo "    Add it to /etc/shells, then run: chsh -s $desired_shell" >&2
+  fi
 fi
 
 echo ""

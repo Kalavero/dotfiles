@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+STRICT=false
+SHELLCHECK_BIN="${KALAVERO_SHELLCHECK_BIN:-}"
+PYTHON_BIN="python3"
+
+if [ -x "$REPO_DIR/.venv/bin/python3" ]; then
+  PYTHON_BIN="$REPO_DIR/.venv/bin/python3"
+fi
+
+if [ "${1:-}" = "--strict" ]; then
+  STRICT=true
+  shift
+fi
+
+if [ "$#" -gt 0 ]; then
+  echo "Usage: ./script/check [--strict]" >&2
+  exit 2
+fi
+
+step() {
+  printf '\n==> %s\n' "$1"
+}
+
+optional_check_missing() {
+  local dependency="$1"
+  local install_hint="$2"
+
+  if [ "$STRICT" = true ]; then
+    echo "Missing required check dependency: $dependency" >&2
+    echo "Install it with: $install_hint" >&2
+    return 1
+  fi
+
+  echo "Skipping $dependency check. Install it with: $install_hint" >&2
+}
+
+cd "$REPO_DIR"
+
+step "Checking Bash and Zsh syntax"
+bash -n install.sh sync.sh script/check test/*.sh
+zsh -n zsh/.zshrc zsh/.zshenv aliases/.aliases zsh/.zsh/functions/*
+
+step "Checking JavaScript syntax"
+node --check script/render-agents.mjs
+node --check script/configure-codex.mjs
+
+step "Checking JSON and TOML syntax"
+"$PYTHON_BIN" -m json.tool .claude-plugin/marketplace.json >/dev/null
+"$PYTHON_BIN" -m json.tool plugins/kalavero/.claude-plugin/plugin.json >/dev/null
+for toml_file in starship/.config/starship.toml herdr/.config/herdr/config.toml; do
+  "$PYTHON_BIN" - "$toml_file" <<'PY'
+import pathlib
+import sys
+import tomllib
+
+path = pathlib.Path(sys.argv[1])
+with path.open("rb") as config:
+    tomllib.load(config)
+PY
+done
+
+step "Running repository tests"
+for test_file in test/*_test.sh; do
+  "$test_file"
+done
+
+step "Running ShellCheck"
+if [ -z "$SHELLCHECK_BIN" ] && command -v shellcheck >/dev/null 2>&1; then
+  SHELLCHECK_BIN="$(command -v shellcheck)"
+fi
+if [ -n "$SHELLCHECK_BIN" ]; then
+  "$SHELLCHECK_BIN" install.sh sync.sh script/check test/*.sh
+else
+  optional_check_missing "ShellCheck" "brew install shellcheck"
+fi
+
+step "Validating the plugin bundle"
+if "$PYTHON_BIN" -c 'import yaml' >/dev/null 2>&1; then
+  "$PYTHON_BIN" script/validate-workflow.py "$REPO_DIR"
+else
+  optional_check_missing "PyYAML" "python3 -m venv .venv && .venv/bin/python3 -m pip install -r requirements-dev.txt"
+fi
+
+printf '\nAll available checks passed.\n'

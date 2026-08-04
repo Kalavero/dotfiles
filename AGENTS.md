@@ -4,7 +4,7 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 
 ## How The Repo Is Organized
 
-- Each top-level directory is a stow package.
+- Stow packages are the directories listed in `stow-packages.txt`.
 - Package contents mirror paths under `$HOME`.
 - `iterm2/` is documentation only and is not stowed.
 
@@ -39,6 +39,7 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 - Prefer the smallest practical verification step for the change.
 - For dotfile changes, confirm the affected package still stows cleanly.
 - For shell or install changes, sanity-check the relevant command or script.
+- Run `./script/check` for changes to synchronization, packages, or shared AI workflow assets.
 
 ## Shared AI Workflow
 
