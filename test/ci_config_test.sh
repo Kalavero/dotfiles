@@ -9,5 +9,7 @@ workflow="$REPO_DIR/.github/workflows/check.yml"
 assert_contains 'branches: [main]' "$workflow"
 assert_contains 'cache: pip' "$workflow"
 assert_contains 'cache-dependency-path: requirements-dev.txt' "$workflow"
+assert_contains 'sudo apt-get update && sudo apt-get install -y shellcheck stow zsh neovim' "$workflow"
+assert_contains 'brew install shellcheck stow neovim' "$workflow"
 
-pass 'CI runs once per PR and pip caching tracks development requirements'
+pass 'CI runs once per PR with all check dependencies'

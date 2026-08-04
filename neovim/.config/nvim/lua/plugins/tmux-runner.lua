@@ -1,5 +1,8 @@
 return {
   "christoomey/vim-tmux-runner",
+  enabled = function()
+    return not require("config.multiplexer_runner").is_herdr()
+  end,
   config = function()
     if vim.env.TMUX and vim.env.TMUX ~= "" then
       vim.api.nvim_create_autocmd("VimEnter", {

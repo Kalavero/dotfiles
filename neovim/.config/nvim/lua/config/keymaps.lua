@@ -56,15 +56,17 @@ map("n", "<Leader>rn", ":call RunNearestSpec()<CR>", { desc = "Run nearest spec"
 map("n", "<Leader>rl", ":call RunLastSpec()<CR>", { desc = "Run last spec" })
 map("n", "<Leader>ra", ":call RunAllSpecs()<CR>", { desc = "Run all specs" })
 
--- Rubocop via VTR
-map("n", "<Leader>ru", ":call VtrSendCommand('rubocop')<CR>", { desc = "Rubocop dir" })
+-- Rubocop via the active multiplexer runner
+map("n", "<Leader>ru", function()
+  require("config.multiplexer_runner").send("rubocop")
+end, { desc = "Rubocop dir" })
 map("n", "<Leader>rfu", function()
-  vim.cmd("call VtrSendCommand('rubocop ' . expand('%'))")
+  require("config.multiplexer_runner").send("rubocop " .. vim.fn.expand("%"))
 end, { desc = "Rubocop file" })
 
--- Flog via VTR
+-- Flog via the active multiplexer runner
 map("n", "<Leader>fl", function()
-  vim.cmd("call VtrSendCommand('flog ' . expand('%'))")
+  require("config.multiplexer_runner").send("flog " .. vim.fn.expand("%"))
 end, { desc = "Flog file" })
 
 -- Ctags

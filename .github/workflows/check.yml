@@ -24,10 +24,10 @@ jobs:
           cache-dependency-path: requirements-dev.txt
       - name: Install Linux check dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y shellcheck stow zsh
+        run: sudo apt-get update && sudo apt-get install -y shellcheck stow zsh neovim
       - name: Install macOS check dependencies
         if: runner.os == 'macOS'
-        run: brew install shellcheck stow
+        run: brew install shellcheck stow neovim
       - name: Install Python check dependencies
         run: python3 -m pip install -r requirements-dev.txt
       - name: Run checks

@@ -81,7 +81,7 @@ Leader key: **Space**
 | `<Leader>y` | Yank to clipboard |
 | `<Leader>p` | Paste from clipboard |
 
-#### RSpec (via tmux runner)
+#### RSpec and checks (via tmux or Herdr runner)
 
 | Key | Action |
 |-----|--------|
@@ -91,6 +91,11 @@ Leader key: **Space**
 | `<Leader>ra` | Run all specs |
 | `<Leader>ru` | Rubocop (directory) |
 | `<Leader>rfu` | Rubocop (current file) |
+
+Use `:VtrAttachToPane` to choose where these commands run. In a Herdr tab with
+two panes, it automatically attaches to the other pane. With more panes it
+opens a picker, and an explicit ID such as `:VtrAttachToPane wA:p4` also works.
+Tmux continues to use `vim-tmux-runner` and its numeric pane IDs.
 
 #### LSP
 

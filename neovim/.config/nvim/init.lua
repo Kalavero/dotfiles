@@ -1,4 +1,5 @@
 require("config.options")
+require("config.multiplexer_runner").setup()
 require("config.lazy")
 require("config.keymaps")
 require("config.autocmds")
