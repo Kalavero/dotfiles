@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SKILL=""
+RUNNER=""
+RUNS=1
+OUTPUT_DIR=""
+
+usage() {
+  cat <<'USAGE'
+Usage: ./script/benchmark-skill --skill NAME --runner PATH [--runs N] [--output DIR]
+
+Run paired control and treatment trials for every task in benchmarks/NAME. The
+runner is an executable that receives the benchmark environment variables
+documented in benchmarks/README.md.
+USAGE
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --skill)
+      SKILL="${2:-}"
+      shift 2
+      ;;
+    --runner)
+      RUNNER="${2:-}"
+      shift 2
+      ;;
+    --runs)
+      RUNS="${2:-}"
+      shift 2
+      ;;
+    --output)
+      OUTPUT_DIR="${2:-}"
+      shift 2
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [ -z "$SKILL" ] || [ -z "$RUNNER" ]; then
+  usage >&2
+  exit 2
+fi
+
+if ! [[ "$RUNS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "--runs must be a positive integer" >&2
+  exit 2
+fi
+
+if [ ! -x "$RUNNER" ]; then
+  echo "runner must be an executable file: $RUNNER" >&2
+  exit 2
+fi
+
+TASK_ROOT="$REPO_DIR/benchmarks/$SKILL"
+if [ ! -d "$TASK_ROOT" ]; then
+  echo "no benchmark tasks found for skill: $SKILL" >&2
+  exit 2
+fi
+
+TASKS=()
+while IFS= read -r task; do
+  TASKS+=("$task")
+done < <(find "$TASK_ROOT" -mindepth 1 -maxdepth 1 -type d -print | sort)
+if [ "${#TASKS[@]}" -eq 0 ]; then
+  echo "no benchmark tasks found for skill: $SKILL" >&2
+  exit 2
+fi
+
+for task in "${TASKS[@]}"; do
+  [ -f "$task/prompt.md" ] || { echo "missing prompt: $task/prompt.md" >&2; exit 2; }
+  [ -x "$task/grade.sh" ] || { echo "missing executable grader: $task/grade.sh" >&2; exit 2; }
+done
+
+if [ -z "$OUTPUT_DIR" ]; then
+  OUTPUT_DIR="$REPO_DIR/benchmark-results/$SKILL-$(date +%Y%m%d%H%M%S)"
+fi
+
+mkdir -p "$OUTPUT_DIR"
+OUTPUT_DIR="$(cd "$OUTPUT_DIR" && pwd)"
+TRIAL_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/kalavero-benchmark.XXXXXX")"
+RESULTS_FILE="$OUTPUT_DIR/results.tsv"
+printf 'task\tvariant\trun\tpassed\trunner_exit\n' > "$RESULTS_FILE"
+
+cleanup() {
+  rm -rf "$TRIAL_ROOT"
+}
+trap cleanup EXIT
+
+prepare_skills() {
+  local variant="$1"
+  local destination="$2"
+  local source name
+
+  mkdir -p "$destination"
+  for source in "$REPO_DIR"/plugins/kalavero/skills/*; do
+    [ -d "$source" ] || continue
+    name="$(basename "$source")"
+    if [ "$variant" = control ] && [ "$name" = "$SKILL" ]; then
+      continue
+    fi
+    ln -s "$source" "$destination/$name"
+  done
+}
+
+run_trial() {
+  local task="$1"
+  local variant="$2"
+  local run_number="$3"
+  local task_name trial_dir workspace agent_home skills_dir prompt_file runner_exit passed
+
+  task_name="$(basename "$task")"
+  trial_dir="$TRIAL_ROOT/$task_name/$variant-$run_number"
+  workspace="$trial_dir/workspace"
+  agent_home="$trial_dir/home"
+  skills_dir="$agent_home/.agents/skills"
+  prompt_file="$task/prompt.md"
+  mkdir -p "$trial_dir"
+  mkdir -p "$workspace"
+  git -C "$REPO_DIR" archive HEAD | tar -x -C "$workspace"
+  git -C "$workspace" init -q
+  git -C "$workspace" config user.email benchmark@kalavero.local
+  git -C "$workspace" config user.name "Kalavero benchmark"
+  git -C "$workspace" add -A
+  git -C "$workspace" commit -qm baseline
+  prepare_skills "$variant" "$skills_dir"
+
+  set +e
+  BENCHMARK_AGENT_HOME="$agent_home" \
+    BENCHMARK_PROMPT_FILE="$prompt_file" \
+    BENCHMARK_SKILLS_DIR="$skills_dir" \
+    BENCHMARK_VARIANT="$variant" \
+    BENCHMARK_WORKSPACE="$workspace" \
+    "$RUNNER" >"$trial_dir/runner.log" 2>&1
+  runner_exit=$?
+  set -e
+
+  if "$task/grade.sh" "$workspace" >"$trial_dir/grader.log" 2>&1; then
+    passed=true
+  else
+    passed=false
+  fi
+
+  cp "$trial_dir/runner.log" "$OUTPUT_DIR/$task_name-$variant-$run_number.runner.log"
+  cp "$trial_dir/grader.log" "$OUTPUT_DIR/$task_name-$variant-$run_number.grader.log"
+  printf '%s\t%s\t%s\t%s\t%s\n' "$task_name" "$variant" "$run_number" "$passed" "$runner_exit" >> "$RESULTS_FILE"
+}
+
+for task in "${TASKS[@]}"; do
+  for run_number in $(seq 1 "$RUNS"); do
+    run_trial "$task" control "$run_number"
+    run_trial "$task" treatment "$run_number"
+  done
+done
+
+python3 - "$RESULTS_FILE" "$OUTPUT_DIR/results.json" "$SKILL" <<'PY'
+import csv
+import json
+import sys
+
+source, destination, skill = sys.argv[1:]
+with open(source, newline="", encoding="utf-8") as handle:
+    rows = list(csv.DictReader(handle, delimiter="\t"))
+
+for row in rows:
+    row["run"] = int(row["run"])
+    row["passed"] = row["passed"] == "true"
+    row["runner_exit"] = int(row["runner_exit"])
+
+with open(destination, "w", encoding="utf-8") as handle:
+    json.dump({"skill": skill, "trials": rows}, handle, indent=2)
+    handle.write("\n")
+PY
+
+echo "Benchmark results: $OUTPUT_DIR/results.json"

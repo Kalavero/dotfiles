@@ -40,7 +40,7 @@ optional_check_missing() {
 cd "$REPO_DIR"
 
 step "Checking Bash and Zsh syntax"
-bash -n install.sh sync.sh script/check test/*.sh
+bash -n install.sh sync.sh script/check script/benchmark-skill test/*.sh
 zsh -n zsh/.zshrc zsh/.zshenv aliases/.aliases zsh/.zsh/functions/*
 
 step "Checking JavaScript syntax"

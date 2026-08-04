@@ -51,12 +51,15 @@ Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> n
 ./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, syncs shared Claude/OpenCode/Pi/Codex assets, clones TPM, stows all packages, sets zsh as default shell
 ./script/check      # Validates scripts, manifests, package docs, and an isolated end-to-end sync
 ./sync.sh --dry-run # Previews publishing and stow changes without writing them
+./script/benchmark-skill --skill dotfiles-package --runner /path/to/runner --runs 3 # Paired skill benchmark
 brew bundle         # Just the Homebrew packages
 stow <package>      # Stow a single package
 stow -D <package>   # Unstow (remove symlinks)
 ```
 
 The canonical Stow package list is `stow-packages.txt`. Update that registry when adding or removing a package; synchronization, Docker validation, and documentation checks consume it.
+
+Skill benchmark tasks live in `benchmarks/<skill>/`. The benchmark harness runs a control trial with the target skill excluded and a treatment trial with it included, then records objective grader results under `benchmark-results/`. See `benchmarks/README.md` for the runner contract.
 
 ## Tech Stack
 

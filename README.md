@@ -241,6 +241,16 @@ docker run -it kalavero-dotfiles
 - Advance the plugin manifest version only as part of an explicit plugin release.
 - Treat `CHANGELOG.md` as release-owned documentation, not a file for routine configuration changes.
 
+### Skill benchmarks
+
+Run paired control and treatment trials for a skill with an agent-specific runner:
+
+```bash
+./script/benchmark-skill --skill dotfiles-package --runner /absolute/path/to/runner --runs 3
+```
+
+The harness gives each trial a disposable repository and objectively grades the result. Treatment has every Kalavero skill available; control has the same set except the skill being measured. See [`benchmarks/README.md`](benchmarks/README.md) for the runner contract and task format. Results are written to the gitignored `benchmark-results/` directory.
+
 ## Credits
 
 Inspired by [Campus Code dotfiles](https://github.com/campuscode/cc_dotfiles), [Skwp](https://github.com/skwp/dotfiles), and [ThoughtBot](https://github.com/thoughtbot/dotfiles).
