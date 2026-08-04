@@ -68,8 +68,8 @@ if [ ! -d "$TASK_ROOT" ]; then
   exit 2
 fi
 
-if [ -f "$REPO_DIR/skills/$SKILL/SKILL.md" ]; then
-  TARGET_SKILL_DIR="$REPO_DIR/skills/$SKILL"
+if [ -f "$REPO_DIR/.agents/skills/$SKILL/SKILL.md" ]; then
+  TARGET_SKILL_DIR="$REPO_DIR/.agents/skills/$SKILL"
 elif [ -f "$REPO_DIR/plugins/kalavero/skills/$SKILL/SKILL.md" ]; then
   TARGET_SKILL_DIR="$REPO_DIR/plugins/kalavero/skills/$SKILL"
 else
@@ -148,6 +148,9 @@ run_trial() {
   git -C "$workspace" add -A
   git -C "$workspace" commit -qm baseline
   prepare_skills "$variant" "$skills_dir"
+  rm -rf "$workspace/.agents/skills"
+  mkdir -p "$workspace/.agents"
+  ln -s "$skills_dir" "$workspace/.agents/skills"
 
   set +e
   BENCHMARK_AGENT_HOME="$agent_home" \

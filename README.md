@@ -202,7 +202,7 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
-Repository-specific skills are not published through the plugin: `skills/dotfiles-package/` covers dotfile configuration, and `skills/skill-benchmark/` covers the benchmark harness.
+Repository-specific skills are not published through the plugin: `.agents/skills/dotfiles-package/` covers dotfile configuration, and `.agents/skills/skill-benchmark/` covers the benchmark harness.
 
 ### Agents
 

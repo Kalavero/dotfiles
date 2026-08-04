@@ -11,11 +11,11 @@ while IFS= read -r package || [ -n "$package" ]; do
   assert_contains "\`$package/\`" "$REPO_DIR/CLAUDE.md"
 done < "$REPO_DIR/stow-packages.txt"
 
-assert_contains 'skills/dotfiles-package/SKILL.md' "$REPO_DIR/AGENTS.md"
-assert_contains 'skills/skill-benchmark/SKILL.md' "$REPO_DIR/AGENTS.md"
-assert_contains 'stow-packages.txt' "$REPO_DIR/skills/dotfiles-package/SKILL.md"
+assert_contains '.agents/skills/dotfiles-package/SKILL.md' "$REPO_DIR/AGENTS.md"
+assert_contains '.agents/skills/skill-benchmark/SKILL.md' "$REPO_DIR/AGENTS.md"
+assert_contains 'stow-packages.txt' "$REPO_DIR/.agents/skills/dotfiles-package/SKILL.md"
 for local_skill in dotfiles-package skill-benchmark; do
-  assert_directory "$REPO_DIR/skills/$local_skill"
+  assert_directory "$REPO_DIR/.agents/skills/$local_skill"
   [ ! -e "$REPO_DIR/plugins/kalavero/skills/$local_skill" ] || fail "$local_skill must remain repository-local"
 done
 assert_contains 'herdr/.config/herdr/release-notes.json' "$REPO_DIR/.gitignore"
