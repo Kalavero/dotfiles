@@ -30,7 +30,7 @@ Resolve `$ARGUMENTS` into an issue:
 
 ### 2. Implementation Phase
 
-- Follow the kalavero:test-driven-development skill's Prove-It pattern: write a failing test that reproduces the bug before touching the fix
+- Write a failing test that reproduces the bug before touching the fix
 - Implement the fix following the approved plan
 - Run relevant tests after each change to catch regressions early
 - Use the kalavero:code-reviewer agent to review your changes before presenting them

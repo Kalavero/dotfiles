@@ -201,7 +201,7 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `migration-safety` | Writing or reviewing database migrations |
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `dotfiles-package` | Adding or restructuring config in this repo |
-| `planning-and-task-breakdown`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
+| `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
 ### Agents
 

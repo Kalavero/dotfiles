@@ -7,7 +7,7 @@ description: Implement the next task incrementally — build, test, verify, comm
   Source: https://github.com/addyosmani/agent-skills (MIT License)
 -->
 
-Invoke the kalavero:incremental-implementation skill alongside kalavero:test-driven-development.
+Invoke the kalavero:incremental-implementation skill.
 
 Pick the next pending task from the plan. For each task:
 
