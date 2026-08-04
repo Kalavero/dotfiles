@@ -24,7 +24,7 @@ Measure the target skill's incremental effect. Compare otherwise identical runs 
 - Run a control without the target skill and a treatment with it.
 - Alternate control and treatment, and repeat each task three to five times to reduce run-to-run variance.
 
-When a repository provides `script/benchmark-skill`, use it with an agent-specific runner. Read `benchmarks/README.md` for the runner contract and task format before adding tasks or running trials.
+Use `script/benchmark-skill` with an agent-specific runner. Read `benchmarks/README.md` for the runner contract and task format before adding tasks or running trials.
 
 ## Evaluate outcomes
 
