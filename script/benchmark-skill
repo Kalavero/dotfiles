@@ -7,14 +7,15 @@ SKILL=""
 RUNNER=""
 RUNS=1
 OUTPUT_DIR=""
+VARIANT="paired"
 
 usage() {
   cat <<'USAGE'
-Usage: ./script/benchmark-skill --skill NAME --runner PATH [--runs N] [--output DIR]
+Usage: ./script/benchmark-skill --skill NAME --runner PATH [--runs N] [--output DIR] [--variant VARIANT]
 
-Run paired control and treatment trials for every task in benchmarks/NAME. The
-runner is an executable that receives the benchmark environment variables
-documented in benchmarks/README.md.
+Run control, treatment, or paired trials for every task in benchmarks/NAME.
+The runner is an executable that receives the benchmark environment variables
+documented in benchmarks/README.md. VARIANT is control, treatment, or paired.
 USAGE
 }
 
@@ -36,6 +37,10 @@ while [ "$#" -gt 0 ]; do
       OUTPUT_DIR="${2:-}"
       shift 2
       ;;
+    --variant)
+      VARIANT="${2:-}"
+      shift 2
+      ;;
     --help|-h)
       usage
       exit 0
@@ -54,6 +59,11 @@ fi
 
 if ! [[ "$RUNS" =~ ^[1-9][0-9]*$ ]]; then
   echo "--runs must be a positive integer" >&2
+  exit 2
+fi
+
+if [ "$VARIANT" != control ] && [ "$VARIANT" != treatment ] && [ "$VARIANT" != paired ]; then
+  echo "--variant must be control, treatment, or paired" >&2
   exit 2
 fi
 
@@ -147,6 +157,9 @@ run_trial() {
   git -C "$workspace" config user.name "Kalavero benchmark"
   git -C "$workspace" add -A
   git -C "$workspace" commit -qm baseline
+  if [ -f "$task/setup.sh" ]; then
+    "$task/setup.sh" "$workspace"
+  fi
   prepare_skills "$variant" "$skills_dir"
   rm -rf "$workspace/.agents/skills"
   mkdir -p "$workspace/.agents"
@@ -175,8 +188,12 @@ run_trial() {
 
 for task in "${TASKS[@]}"; do
   for run_number in $(seq 1 "$RUNS"); do
-    run_trial "$task" control "$run_number"
-    run_trial "$task" treatment "$run_number"
+    if [ "$VARIANT" = control ] || [ "$VARIANT" = paired ]; then
+      run_trial "$task" control "$run_number"
+    fi
+    if [ "$VARIANT" = treatment ] || [ "$VARIANT" = paired ]; then
+      run_trial "$task" treatment "$run_number"
+    fi
   done
 done
 
