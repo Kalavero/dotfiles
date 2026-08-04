@@ -157,6 +157,118 @@ backup_if_conflict() {
   fi
 }
 
+publish_skill_links() {
+  local source_dir="$DOTFILES_DIR/$1"
+  local target_dir="$TARGET_HOME/$2"
+  local source
+  local target
+  local destination
+  local virtual_empty=false
+
+  if [ -L "$target_dir" ]; then
+    if [ "$(readlink "$target_dir")" = "$source_dir" ]; then
+      if [ "$DRY_RUN" = true ]; then
+        echo "  Would replace legacy skills root symlink: ~/$2"
+        virtual_empty=true
+      else
+        echo "  Replacing legacy skills root symlink: ~/$2"
+        rm "$target_dir"
+        mkdir -p "$target_dir"
+      fi
+    else
+      echo "  Preserving user-managed skills root symlink: ~/$2" >&2
+      return 0
+    fi
+  elif [ -e "$target_dir" ] && [ ! -d "$target_dir" ]; then
+    echo "  Preserving user-managed skills path: ~/$2" >&2
+    return 0
+  elif [ ! -d "$target_dir" ]; then
+    if [ "$DRY_RUN" = true ]; then
+      virtual_empty=true
+    else
+      mkdir -p "$target_dir"
+    fi
+  fi
+
+  if [ "$virtual_empty" = false ]; then
+    for target in "$target_dir"/*; do
+      [ -L "$target" ] || continue
+      destination="$(readlink "$target")"
+      case "$destination" in
+        "$source_dir"/*)
+          source="$source_dir/$(basename "$target")"
+          if [ "$destination" != "$source" ] || [ ! -d "$source" ] || [ ! -f "$source/SKILL.md" ]; then
+            if [ "$DRY_RUN" = true ]; then
+              echo "  Would remove stale Kalavero skill link: $target"
+            else
+              echo "  Removing stale Kalavero skill link: $target"
+              rm "$target"
+            fi
+          fi
+          ;;
+      esac
+    done
+  fi
+
+  for source in "$source_dir"/*; do
+    [ -d "$source" ] || continue
+    [ -f "$source/SKILL.md" ] || continue
+    target="$target_dir/$(basename "$source")"
+
+    if [ "$virtual_empty" = false ] && [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
+      continue
+    fi
+
+    if [ "$virtual_empty" = false ] && { [ -e "$target" ] || [ -L "$target" ]; }; then
+      echo "  Preserving user-managed skill: $target" >&2
+      continue
+    fi
+
+    if [ "$DRY_RUN" = true ]; then
+      echo "  Would link Kalavero skill: $target"
+    else
+      ln -s "$source" "$target"
+    fi
+  done
+}
+
+remove_published_skill_links() {
+  local source_dir="$DOTFILES_DIR/$1"
+  local target_dir="$TARGET_HOME/$2"
+  local target
+  local destination
+
+  if [ -L "$target_dir" ]; then
+    if [ "$(readlink "$target_dir")" = "$source_dir" ]; then
+      if [ "$DRY_RUN" = true ]; then
+        echo "  Would remove legacy repository-owned skills root: ~/$2"
+      else
+        echo "  Removing legacy repository-owned skills root: ~/$2"
+        rm "$target_dir"
+      fi
+    else
+      echo "  Preserving user-managed skills root symlink: ~/$2" >&2
+    fi
+    return 0
+  fi
+
+  [ -d "$target_dir" ] || return 0
+  for target in "$target_dir"/*; do
+    [ -L "$target" ] || continue
+    destination="$(readlink "$target")"
+    case "$destination" in
+      "$source_dir"/*)
+        if [ "$DRY_RUN" = true ]; then
+          echo "  Would remove legacy Kalavero skill link: $target"
+        else
+          echo "  Removing legacy Kalavero skill link: $target"
+          rm "$target"
+        fi
+        ;;
+    esac
+  done
+}
+
 generate_agents() {
   local format="$1"
   local source_dir="$DOTFILES_DIR/plugins/kalavero/agents"
@@ -271,26 +383,26 @@ backup_if_conflict ".config/herdr"
 
 echo "==> Linking shared AI workflow assets..."
 link_if_needed "plugins/kalavero/commands" ".claude/commands"
-link_if_needed "plugins/kalavero/skills" ".claude/skills"
+publish_skill_links "plugins/kalavero/skills" ".claude/skills"
 generate_agents claude
 
 link_if_needed "plugins/kalavero/commands" ".agents/commands"
-link_if_needed "plugins/kalavero/skills" ".agents/skills"
+publish_skill_links "plugins/kalavero/skills" ".agents/skills"
 link_if_needed "plugins/kalavero/agents" ".agents/agents"
 
 link_if_needed "plugins/kalavero/commands" ".config/opencode/commands"
-link_if_needed "plugins/kalavero/skills" ".config/opencode/skills"
+publish_skill_links "plugins/kalavero/skills" ".config/opencode/skills"
 generate_agents opencode
 
 link_if_needed "plugins/kalavero/commands" ".pi/agent/prompts"
-link_if_needed "plugins/kalavero/skills" ".pi/agent/skills"
+publish_skill_links "plugins/kalavero/skills" ".pi/agent/skills"
 
 link_if_needed "home/AGENTS.md" ".claude/CLAUDE.md"
 link_if_needed "home/AGENTS.md" ".config/opencode/AGENTS.md"
 link_if_needed "home/AGENTS.md" ".codex/AGENTS.md"
 link_if_needed "home/AGENTS.md" ".pi/agent/AGENTS.md"
 link_if_needed "plugins/kalavero/commands" ".codex/commands"
-link_if_needed "plugins/kalavero/skills" ".codex/skills"
+remove_published_skill_links "plugins/kalavero/skills" ".codex/skills"
 link_if_needed "plugins/kalavero/agents" ".codex/agents"
 
 echo "==> Configuring lower-cost subagent models..."

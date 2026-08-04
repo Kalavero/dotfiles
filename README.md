@@ -160,7 +160,7 @@ Override any config locally without touching tracked files:
 
 The repo doubles as a [Claude Code](https://claude.com/claude-code) plugin marketplace. The `kalavero` plugin at `plugins/kalavero/` packages personal engineering workflows as commands, skills, and agents. Nothing in it is tied to a specific employer or vendor — trackers, PR templates, and branch conventions are discovered at runtime from whatever repo and MCP servers are available.
 
-The same source assets are published by `sync.sh` for Claude Code, OpenCode, Pi, and Codex. Claude and OpenCode agent files are generated because their frontmatter formats differ; generated files contain an ownership marker and should not be edited directly.
+The same source assets are published by `sync.sh` for Claude Code, OpenCode, Pi, and Codex. Skills are linked individually so they can coexist with user-managed and host-managed skills. Codex discovers the shared user skills through `~/.agents/skills`; this repo does not manage `~/.codex/skills` or vendor Codex system skills. Claude and OpenCode agent files are generated because their frontmatter formats differ; generated files contain an ownership marker and should not be edited directly.
 
 ### Setup
 
@@ -201,7 +201,6 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `migration-safety` | Writing or reviewing database migrations |
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `dotfiles-package` | Adding or restructuring config in this repo |
-| `skill-creator` | Creating, testing, and refining new skills |
 | `planning-and-task-breakdown`, `incremental-implementation`, `test-driven-development`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
 ### Agents
@@ -237,7 +236,7 @@ docker run -it kalavero-dotfiles
 
 ### Workflow asset maintenance
 
-- Update vendored `.system` skill directories as complete upstream units, including their license and attribution files.
+- Keep host-managed system skills out of `plugins/kalavero/skills`; the workflow validator rejects a vendored `.system` directory.
 - Run `./script/check --strict` after changing commands, agents, skills, manifests, or generated-output rules.
 - Advance the plugin manifest version only as part of an explicit plugin release.
 - Treat `CHANGELOG.md` as release-owned documentation, not a file for routine configuration changes.

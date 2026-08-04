@@ -50,8 +50,13 @@ def require_string(payload: dict[str, Any], field: str, path: Path) -> str:
 
 def validate(repo: Path) -> None:
     plugin_root = repo / "plugins" / "kalavero"
+    system_skills_path = plugin_root / "skills" / ".system"
     manifest_path = plugin_root / ".claude-plugin" / "plugin.json"
     marketplace_path = repo / ".claude-plugin" / "marketplace.json"
+
+    if system_skills_path.exists() or system_skills_path.is_symlink():
+        error(f"{system_skills_path}: plugins must not vendor host-managed system skills")
+
     manifest = load_json(manifest_path)
     marketplace = load_json(marketplace_path)
 
