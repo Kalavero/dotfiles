@@ -109,7 +109,7 @@ mkdir -p "$OUTPUT_DIR"
 OUTPUT_DIR="$(cd "$OUTPUT_DIR" && pwd)"
 TRIAL_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/kalavero-benchmark.XXXXXX")"
 RESULTS_FILE="$OUTPUT_DIR/results.tsv"
-printf 'task\tvariant\trun\tpassed\trunner_exit\n' > "$RESULTS_FILE"
+printf 'task\tvariant\trun\tpassed\trunner_exit\ttokens\n' > "$RESULTS_FILE"
 
 cleanup() {
   rm -rf "$TRIAL_ROOT"
@@ -141,7 +141,7 @@ run_trial() {
   local task="$1"
   local variant="$2"
   local run_number="$3"
-  local task_name trial_dir workspace agent_home skills_dir prompt_file runner_exit passed
+  local task_name trial_dir workspace agent_home skills_dir prompt_file runner_exit passed tokens
 
   task_name="$(basename "$task")"
   trial_dir="$TRIAL_ROOT/$task_name/$variant-$run_number"
@@ -174,6 +174,7 @@ run_trial() {
     "$RUNNER" >"$trial_dir/runner.log" 2>&1
   runner_exit=$?
   set -e
+  tokens="$(awk '/^tokens used$/{getline; gsub(",", ""); if ($0 ~ /^[0-9]+$/) { print; exit }}' "$trial_dir/runner.log")"
 
   if "$task/grade.sh" "$workspace" >"$trial_dir/grader.log" 2>&1; then
     passed=true
@@ -183,7 +184,7 @@ run_trial() {
 
   cp "$trial_dir/runner.log" "$OUTPUT_DIR/$task_name-$variant-$run_number.runner.log"
   cp "$trial_dir/grader.log" "$OUTPUT_DIR/$task_name-$variant-$run_number.grader.log"
-  printf '%s\t%s\t%s\t%s\t%s\n' "$task_name" "$variant" "$run_number" "$passed" "$runner_exit" >> "$RESULTS_FILE"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$task_name" "$variant" "$run_number" "$passed" "$runner_exit" "$tokens" >> "$RESULTS_FILE"
 }
 
 for task in "${TASKS[@]}"; do
@@ -210,6 +211,7 @@ for row in rows:
     row["run"] = int(row["run"])
     row["passed"] = row["passed"] == "true"
     row["runner_exit"] = int(row["runner_exit"])
+    row["tokens"] = int(row["tokens"]) if row["tokens"] else None
 
 with open(destination, "w", encoding="utf-8") as handle:
     json.dump({"skill": skill, "trials": rows}, handle, indent=2)

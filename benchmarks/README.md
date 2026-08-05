@@ -11,7 +11,7 @@ Run a paired benchmark with an agent-specific runner:
   --runs 3
 ```
 
-The harness runs every task in `benchmarks/<skill>/` in a clean, disposable Git repository. Each task is run first as a control and then as a treatment. Treatment exposes all Kalavero skills; control exposes the same set except the skill being measured. It writes logs plus `results.json` and `results.tsv` to `benchmark-results/` by default.
+The harness runs every task in `benchmarks/<skill>/` in a clean, disposable Git repository. Each task is run first as a control and then as a treatment. Treatment exposes all Kalavero skills; control exposes the same set except the skill being measured. It writes logs plus `results.json` and `results.tsv` to `benchmark-results/` by default. When a runner prints Codex's `tokens used` summary, the harness records that total for each trial.
 
 ## Runner contract
 

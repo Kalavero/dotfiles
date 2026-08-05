@@ -58,6 +58,7 @@ assert [(trial["variant"], trial["passed"]) for trial in result["trials"]] == [
     ("control", False),
     ("treatment", True),
 ], result
+assert [trial["tokens"] for trial in result["trials"]] == [None, None]
 PY
 
 pass 'skill benchmark runs paired isolated trials and records objective results'
