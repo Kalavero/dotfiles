@@ -19,6 +19,9 @@ brew "fzf"
 brew "git"
 brew "gh"
 
+# AI coding tools
+brew "kimi-code"
+
 # Ruby development
 brew "libyaml"
 brew "openssl"

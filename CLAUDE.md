@@ -48,7 +48,7 @@ Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> n
 ## Install & Build
 
 ```bash
-./install.sh        # Installs Homebrew deps (including Node), Pi, OpenCode, syncs shared Claude/OpenCode/Pi/Codex assets, clones TPM, stows all packages, sets zsh as default shell
+./install.sh        # Installs Homebrew deps (including Node and Kimi Code), Pi, OpenCode, syncs shared Claude/OpenCode/Pi/Codex assets, clones TPM, stows all packages, sets zsh as default shell
 ./script/check      # Validates scripts, manifests, package docs, and an isolated end-to-end sync
 ./sync.sh --dry-run # Previews publishing and stow changes without writing them
 ./script/benchmark-skill --skill dotfiles-package --runner /path/to/runner --runs 3 # Paired skill benchmark
@@ -63,4 +63,4 @@ Skill benchmark tasks live in `benchmarks/<skill>/`. The benchmark harness runs 
 
 ## Tech Stack
 
-Zsh + Starship prompt, Neovim (Lua), Tmux + TPM, Git. Ruby (rvm) + Node.js (brew/nvm). AI tools: Pi, OpenCode. Dev tools: RSpec, Rubocop, ESLint, Prettier.
+Zsh + Starship prompt, Neovim (Lua), Tmux + TPM, Git. Ruby (rvm) + Node.js (brew/nvm). AI tools: Kimi Code, Pi, OpenCode. Dev tools: RSpec, Rubocop, ESLint, Prettier.

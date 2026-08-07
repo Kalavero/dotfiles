@@ -9,6 +9,11 @@ test_root="$(mktemp -d "${TMPDIR:-/tmp}/kalavero-benchmark-test.XXXXXX")"
 runner="$test_root/runner"
 output_dir="$test_root/results"
 
+PYTHON_BIN="python3"
+if [ -x "$REPO_DIR/.venv/bin/python3" ]; then
+  PYTHON_BIN="$REPO_DIR/.venv/bin/python3"
+fi
+
 cleanup() {
   rm -rf "$test_root"
 }
@@ -46,7 +51,7 @@ assert_file "$output_dir/results.json"
 assert_file "$output_dir/add-lazygit-package-control-1.runner.log"
 assert_file "$output_dir/add-lazygit-package-treatment-1.grader.log"
 
-"$REPO_DIR/.venv/bin/python3" - "$output_dir/results.json" <<'PY'
+"$PYTHON_BIN" - "$output_dir/results.json" <<'PY'
 import json
 import sys
 

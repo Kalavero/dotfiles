@@ -30,7 +30,7 @@ cd ~/kalavero_dotfiles
 
 The install script will:
 1. Install [Homebrew](https://brew.sh) if needed
-2. Install all dependencies from the `Brewfile`, including Node.js
+2. Install all dependencies from the `Brewfile`, including Node.js and [Kimi Code](https://www.kimi.com/code)
 3. Install [Pi](https://pi.dev/) and [OpenCode](https://opencode.ai/)
 4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
 5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets and the global agent instructions file into the tool-specific locations they scan

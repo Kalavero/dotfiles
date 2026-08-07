@@ -36,7 +36,7 @@ fi
 echo "==> Installing Homebrew packages..."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 
-# 3. Install AI coding tools
+# 3. Install AI coding tools not managed by Homebrew
 if ! command -v pi &>/dev/null; then
   echo "==> Installing Pi..."
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent
