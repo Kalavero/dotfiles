@@ -31,7 +31,7 @@ cd ~/kalavero_dotfiles
 The install script will:
 1. Install [Homebrew](https://brew.sh) if needed
 2. Install all dependencies from the `Brewfile`, including Node.js and [Kimi Code](https://www.kimi.com/code)
-3. Install [Pi](https://pi.dev/), [OpenCode](https://opencode.ai/), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [treehouse](https://github.com/kunchenguid/treehouse), and the [Skills CLI](https://skills.sh/), then add shared agent skills ([AXI](https://github.com/kunchenguid/axi), [Lavish](https://github.com/kunchenguid/lavish-axi)) and Lavish's session hooks
+3. Install [Pi](https://pi.dev/), [OpenCode](https://opencode.ai/), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [treehouse](https://github.com/kunchenguid/treehouse), and the [Skills CLI](https://skills.sh/), clone [firstmate](https://github.com/kunchenguid/firstmate) to `~/firstmate`, then add shared agent skills ([AXI](https://github.com/kunchenguid/axi), [Lavish](https://github.com/kunchenguid/lavish-axi), [stow](https://github.com/kunchenguid/firstmate)) and Lavish's session hooks
 4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
 5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets and the global agent instructions file into the tool-specific locations they scan
 6. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)

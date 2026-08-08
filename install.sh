@@ -67,10 +67,16 @@ if ! command -v treehouse &>/dev/null; then
   curl -fsSL https://kunchenguid.github.io/treehouse/install.sh | sh
 fi
 
+if [ ! -d "$HOME/firstmate" ]; then
+  echo "==> Cloning firstmate..."
+  git clone https://github.com/kunchenguid/firstmate "$HOME/firstmate"
+fi
+
 if command -v skills &>/dev/null; then
   echo "==> Installing shared agent skills..."
   skills add kunchenguid/axi -g -y
   skills add kunchenguid/lavish-axi --skill lavish -g -y
+  skills add kunchenguid/firstmate --skill stow -g -y
 fi
 
 if ! command -v lavish-axi &>/dev/null; then
