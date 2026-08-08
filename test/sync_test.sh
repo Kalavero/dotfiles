@@ -89,7 +89,7 @@ assert_contains '  "*": false' "$target_home/.config/opencode/agents/planner.md"
 assert_contains '  read: true' "$target_home/.config/opencode/agents/planner.md"
 assert_contains '[agents]' "$target_home/.codex/config.toml"
 assert_contains 'default_subagent_model = "gpt-5.6-terra"' "$target_home/.codex/config.toml"
-[ "$(stat -f '%Lp' "$target_home/.codex/config.toml")" = "600" ] || fail 'sync should preserve existing config.toml permissions'
+[ "$(stat -c '%a' "$target_home/.codex/config.toml" 2>/dev/null || stat -f '%Lp' "$target_home/.codex/config.toml")" = "600" ] || fail 'sync should preserve existing config.toml permissions'
 assert_file "$target_home/.codex/skills/.system/system-sentinel/SKILL.md"
 [ ! -L "$target_home/.codex/skills" ] || fail 'sync should not own the Codex skills directory'
 for skill_root in \
