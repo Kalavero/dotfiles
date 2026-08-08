@@ -14,7 +14,7 @@ description: >
 - Put machine-specific settings in gitignored `.local` files: `.zshrc.local`, `.zshenv.local`, `.aliases.local`, `.gitconfig.local`, `.tmux.conf.local`, or `~/.config/ghostty.local`.
 - Put secrets in `~/.secrets`. Never commit tokens, even temporarily.
 - Keep employer-specific configuration out of the repository. Put it in a `.local` file.
-- Add new CLI tools and fonts to `Brewfile`; put one-time setup in `install.sh`.
+- Add new CLI tools, fonts, and GUI apps (Homebrew casks) to `Brewfile`; put one-time setup in `install.sh`. GUI apps configured through their own preferences do not need a Stow package.
 
 ## Structural changes
 
