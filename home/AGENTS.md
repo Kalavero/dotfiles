@@ -7,6 +7,7 @@
 - When doing bug fixes, always start by reproducing the bug in an end-to-end setting as closely aligned with how an end user would experience it as possible.
 - When end-to-end testing a product, be picky about the UI you see and be obsessed with pixel perfection. If something clearly looks off, fix it along the way.
 - Apply that same high standard to engineering excellence: lint failures, test failures, and flaky tests should be fixed when you see them.
+- Run `npx -y gh-axi` for GitHub operations.
 
 ## Credits
 
