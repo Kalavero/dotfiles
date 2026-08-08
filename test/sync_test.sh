@@ -105,8 +105,8 @@ done
 assert_file "$target_home/.agents/skills/tad/SKILL.md"
 [ ! -L "$target_home/.agents/skills/tad" ] || fail 'a conflicting user-managed skill should be preserved'
 assert_contains 'The user-managed version wins.' "$target_home/.agents/skills/tad/SKILL.md"
-[ ! -e "$target_home/.agents/skills/removed-skill" ] && [ ! -L "$target_home/.agents/skills/removed-skill" ] || fail 'stale repository-owned skill links should be removed'
-[ ! -e "$target_home/.codex/skills/agent-brief" ] && [ ! -L "$target_home/.codex/skills/agent-brief" ] || fail 'legacy Kalavero skill links should be removed from the Codex skills directory'
+if [ -e "$target_home/.agents/skills/removed-skill" ] || [ -L "$target_home/.agents/skills/removed-skill" ]; then fail 'stale repository-owned skill links should be removed'; fi
+if [ -e "$target_home/.codex/skills/agent-brief" ] || [ -L "$target_home/.codex/skills/agent-brief" ]; then fail 'legacy Kalavero skill links should be removed from the Codex skills directory'; fi
 
 "$REPO_DIR/sync.sh" --target-home "$target_home" > "$test_root/second-run.log" 2>&1
 # -L follows folded directory links so backups inside them (which would live
@@ -155,7 +155,7 @@ for skill_root in \
   assert_symlink "$skill_root/agent-brief"
   [ ! -e "$skill_root/.system" ] || fail 'legacy migration should not republish Codex system skills'
 done
-[ ! -e "$legacy_home/.codex/skills" ] && [ ! -L "$legacy_home/.codex/skills" ] || fail 'legacy Codex skills root should return to Codex ownership'
+if [ -e "$legacy_home/.codex/skills" ] || [ -L "$legacy_home/.codex/skills" ]; then fail 'legacy Codex skills root should return to Codex ownership'; fi
 
 dry_home="$test_root/dry-home"
 mkdir -p "$dry_home"
