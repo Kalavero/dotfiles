@@ -147,6 +147,16 @@ backup_if_conflict() {
   if [ ! -e "$target" ] && [ ! -L "$target" ]; then
     return 0
   fi
+  # A directory stow already manages (unfolded, with links into the repo) is
+  # not a conflict; stow merges into it on the next run.
+  if [ -d "$target" ] && [ ! -L "$target" ]; then
+    local entry
+    for entry in "$target"/*; do
+      if [ -L "$entry" ] && symlink_points_into_repo "$entry"; then
+        return 0
+      fi
+    done
+  fi
 
   backup="$(next_backup_path "$target")"
   if [ "$DRY_RUN" = true ]; then
@@ -413,12 +423,16 @@ echo "==> Stowing packages..."
 while IFS= read -r pkg || [ -n "$pkg" ]; do
   [ -n "$pkg" ] || continue
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
+    stow_args=(-v -d "$DOTFILES_DIR" -t "$TARGET_HOME")
+    # herdr writes runtime state into ~/.config/herdr; folding would turn that
+    # directory into a symlink into the repository, bypassing .stow-local-ignore.
+    [ "$pkg" = herdr ] && stow_args+=(--no-folding)
     if [ "$DRY_RUN" = true ]; then
       echo "  Would stow $pkg..."
-      stow --simulate -v -d "$DOTFILES_DIR" -t "$TARGET_HOME" "$pkg"
+      stow --simulate "${stow_args[@]}" "$pkg"
     else
       echo "  Stowing $pkg..."
-      stow -v -d "$DOTFILES_DIR" -t "$TARGET_HOME" "$pkg"
+      stow "${stow_args[@]}" "$pkg"
     fi
   fi
 done < "$DOTFILES_DIR/stow-packages.txt"

@@ -59,7 +59,7 @@ mkdir -p "$HOME/.config/nvim/undodir"
 prompt_terminal_font() {
   local font_choice
 
-  echo "==> Choose your terminal font:"
+  echo "==> Choose your terminal font:" >&2
   PS3="Select 1 or 2: "
   select font_choice in "Hack Nerd Font" "JetBrainsMono Nerd Font"; do
     case "$REPLY" in
@@ -68,7 +68,7 @@ prompt_terminal_font() {
         return 0
         ;;
       *)
-        echo "Please enter 1 or 2."
+        echo "Please enter 1 or 2." >&2
         ;;
     esac
   done

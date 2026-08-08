@@ -1,0 +1,7 @@
+# Runtime state written by herdr at ~/.config/herdr; not source configuration.
+# Patterns must match the whole basename (stow anchors them at both ends).
+.*\.log
+.*\.sock
+\.plugins\.lock
+session\.json
+release-notes\.json

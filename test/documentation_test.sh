@@ -20,5 +20,6 @@ for local_skill in dotfiles-package skill-benchmark; do
 done
 assert_contains 'herdr/.config/herdr/release-notes.json' "$REPO_DIR/.gitignore"
 [ ! -e "$REPO_DIR/herdr/.config/herdr/release-notes.json" ] || fail 'Herdr release notes are a runtime cache, not source configuration'
+assert_contains 'session\.json' "$REPO_DIR/herdr/.stow-local-ignore"
 
 pass 'documentation and repository hygiene follow the package registry'
