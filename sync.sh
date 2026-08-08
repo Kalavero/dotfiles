@@ -422,9 +422,11 @@ configure_codex_subagent_model() {
 
   [ -e "$candidate" ] || return 0
   # mv would replace an existing config with default-umask permissions;
-  # carry over the target's mode first (BSD stat, portable on macOS).
+  # carry over the target's mode first (GNU stat, falling back to BSD).
   if [ -e "$target" ]; then
-    chmod "$(stat -f '%Lp' "$target")" "$candidate"
+    local mode
+    mode="$(stat -c '%a' "$target" 2>/dev/null || stat -f '%Lp' "$target")"
+    chmod "$mode" "$candidate"
   fi
   mv "$candidate" "$target"
 }
