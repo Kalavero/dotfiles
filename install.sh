@@ -58,6 +58,16 @@ if command -v skills &>/dev/null; then
   skills add kunchenguid/lavish-axi --skill lavish -g -y
 fi
 
+if ! command -v lavish-axi &>/dev/null; then
+  echo "==> Installing Lavish..."
+  npm install -g --ignore-scripts lavish-axi
+fi
+
+if command -v lavish-axi &>/dev/null; then
+  echo "==> Configuring Lavish session hooks..."
+  lavish-axi setup hooks
+fi
+
 # 4. Clone TPM (Tmux Plugin Manager) if needed
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   echo "==> Installing Tmux Plugin Manager..."
