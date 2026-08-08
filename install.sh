@@ -57,6 +57,11 @@ if ! command -v no-mistakes &>/dev/null; then
   curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh | sh
 fi
 
+if ! command -v treehouse &>/dev/null; then
+  echo "==> Installing treehouse..."
+  curl -fsSL https://kunchenguid.github.io/treehouse/install.sh | sh
+fi
+
 if command -v skills &>/dev/null; then
   echo "==> Installing shared agent skills..."
   skills add kunchenguid/axi -g -y
