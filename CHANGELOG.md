@@ -16,9 +16,8 @@ All notable changes to these dotfiles are documented here.
     `/kalavero:release-notes`.
   - **Skills** (auto-applied when a task matches): `tad`, `tad-to-tickets`,
     `agent-brief`, `refactor-plan`, `migration-safety`, `flaky-spec`,
-    `dotfiles-package`, plus vendored core methodology (`planning-and-task-breakdown`,
-    `incremental-implementation`, `test-driven-development`,
-    `debugging-and-error-recovery`).
+    plus vendored core methodology (`planning-and-task-breakdown`,
+    `incremental-implementation`, `debugging-and-error-recovery`).
   - **Agents**: `researcher`, `planner`, `implementer`, `test-engineer`, and
     `code-reviewer`, coordinated by `/kalavero:implement` (research → plan →
     build/test/review loop with human approval gates).

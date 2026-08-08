@@ -17,7 +17,6 @@ alias psr='ps aux | grep ruby'
 # Moving around
 alias cdb='cd -'
 alias cls='clear;ls'
-alias clr='clear'
 
 # Show human friendly numbers and colors
 alias df='df -h'
@@ -56,21 +55,16 @@ alias hfull='history 1 -1'
 
 # Git Aliases
 alias gs='git status'
-alias gst='git status'
 alias gsts='git stash'
-alias gsth='git stash'
 alias gsp='git stash pop'
 alias gsa='git stash apply'
 alias gsl='git stash list'
 alias gsh='git show'
-alias gshw='git show'
-alias gshow='git show'
 alias gi='nvim .gitignore'
 alias gc='git c'
 alias gcm='git cm'
 alias gca='git ca'
 alias gcam='git cam'
-alias gco='git co'
 alias gcp='git cp'
 alias ga='git add -A'
 alias guns='git unstage'
@@ -86,15 +80,11 @@ alias gra='git rebase --abort'
 alias grc='git rebase --continue'
 alias gri='git rebase --interactive'
 alias gl='git l'
-alias glg='git l'
-alias glog='git l'
 alias co='git co'
 alias gf='git fetch'
-alias gfch='git fetch'
 alias gd='git diff'
 alias gb='git b'
 alias gbx='git branch --delete'
-alias gbX='git branch -D'
 alias gbd='git branch -D'
 alias gdc='git diff --cached -w'
 alias gpl='git pull'
@@ -116,8 +106,8 @@ alias gbg='git bisect good'
 alias gbb='git bisect bad'
 alias gcl="git clone"
 
-# docker-compose
-alias dc="docker-compose"
+# docker compose
+alias dc="docker compose"
 alias dcr="dc run --rm --service-ports"
 alias dcR="dc run --rm" # no service ports
 alias dcrwb="dcr web bash"
@@ -164,8 +154,8 @@ alias rsb='rails s -b 0.0.0.0'
 if [[ $os_family == 'darwin' ]]
 then
   # Finder
-  alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
-  alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
+  alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+  alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
   # Homebrew
   alias brewu='brew update && brew upgrade && brew cleanup && brew doctor'
   alias mykey="cat $HOME/.ssh/id_rsa.pub | pbcopy"

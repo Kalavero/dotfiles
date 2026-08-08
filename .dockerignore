@@ -8,5 +8,6 @@ tasks
 test
 requirements-dev.txt
 *.backup.*
-*.local
+**/*?.local
 .secrets
+benchmark-results/

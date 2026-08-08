@@ -14,7 +14,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `git/` | Git | 60+ aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
-| `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, Hack Nerd Font 14, option-as-alt, 0.8 opacity, blur 50 |
+| `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, font chosen at install (Hack or JetBrainsMono Nerd Font), option-as-alt, 0.8 opacity, blur 50 |
 | `herdr/` | [Herdr](https://herdr.dev) agent multiplexer | Ctrl-a prefix, tmux-like pane/tab bindings |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
@@ -23,7 +23,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 ## Install
 
 ```bash
-git clone https://github.com/andrelucasvsouza/kalavero_dotfiles.git ~/kalavero_dotfiles
+git clone git@github.com:Kalavero/dotfiles.git ~/kalavero_dotfiles
 cd ~/kalavero_dotfiles
 ./install.sh
 ```

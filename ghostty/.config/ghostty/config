@@ -6,8 +6,7 @@ background-opacity = 0.8
 background-blur = 50
 background-opacity-cells = true
 
-# Font
-font-family = Hack Nerd Font
+# Font (font-family comes from ~/.config/ghostty.local, written by install.sh)
 font-size = 14
 
 # Treat left Option as Alt (matches iTerm2 "Esc+" setting)

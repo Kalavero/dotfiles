@@ -6,7 +6,9 @@ WORKSPACE="${1:?workspace path is required}"
 
 grep -Fxq 'lazygit' "$WORKSPACE/stow-packages.txt"
 grep -Fxq 'brew "lazygit"' "$WORKSPACE/Brewfile"
+# shellcheck disable=SC2016 # Backticks are literal Markdown to match in the docs.
 grep -Fq '`lazygit/`' "$WORKSPACE/README.md"
+# shellcheck disable=SC2016 # Backticks are literal Markdown to match in the docs.
 grep -Fq '`lazygit/`' "$WORKSPACE/CLAUDE.md"
 grep -Fq 'showIcons: true' "$WORKSPACE/lazygit/.config/lazygit/config.yml"
 grep -Eq "editPreset: ['\"]?nvim['\"]?" "$WORKSPACE/lazygit/.config/lazygit/config.yml"
