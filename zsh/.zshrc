@@ -25,8 +25,8 @@ export CLICOLOR=1
 # History
 setopt hist_ignore_all_dups inc_append_history
 HISTFILE=~/.zhistory
-HISTSIZE=4096
-SAVEHIST=4096
+HISTSIZE=50000
+SAVEHIST=50000
 
 # Directory navigation
 setopt autocd autopushd pushdminus pushdsilent pushdtohome cdablevars
