@@ -175,6 +175,9 @@ run_trial() {
   runner_exit=$?
   set -e
   tokens="$(awk '/^tokens used$/{getline; gsub(",", ""); if ($0 ~ /^[0-9]+$/) { print; exit }}' "$trial_dir/runner.log")"
+  if [ -z "$tokens" ]; then
+    echo "  Warning: no token usage found in $trial_dir/runner.log" >&2
+  fi
 
   if "$task/grade.sh" "$workspace" >"$trial_dir/grader.log" 2>&1; then
     passed=true

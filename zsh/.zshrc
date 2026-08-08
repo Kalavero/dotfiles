@@ -5,11 +5,16 @@ fpath=(~/.zsh/completion /opt/homebrew/share/zsh/site-functions /usr/local/share
 
 # Completion
 autoload -U compinit
-compinit -u
+# Skip the security check when the dump file is fresh (less than 20 hours old)
+if [ -f ~/.zcompdump ] && [ "$(find ~/.zcompdump -mmin -1200 2>/dev/null)" ]; then
+  compinit -C -u
+else
+  compinit -u
+fi
 
 # Load custom executable functions
 for function in ~/.zsh/functions/*; do
-  source $function
+  source "$function"
 done
 
 # Colors
@@ -56,6 +61,10 @@ set -o nobeep
 # Zsh syntax highlighting (Homebrew)
 if [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 elif [ -f ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
@@ -69,13 +78,22 @@ fi
 setopt interactivecomments
 
 # RVM
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-export PATH="$PATH:$HOME/.rvm/bin"
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  source "$HOME/.rvm/scripts/rvm"
+  export PATH="$PATH:$HOME/.rvm/bin"
+fi
 
-# NVM
+# NVM (lazy-loaded on first use to keep shell startup fast)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+_nvm_lazy_load() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+nvm() { _nvm_lazy_load; nvm "$@"; }
+node() { _nvm_lazy_load; node "$@"; }
+npm() { _nvm_lazy_load; npm "$@"; }
+npx() { _nvm_lazy_load; npx "$@"; }
 
 # bun completions
 export BUN_INSTALL="$HOME/.bun"
