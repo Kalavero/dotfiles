@@ -44,7 +44,6 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 ## Repository-local skills
 
 - Before adding, moving, or restructuring dotfile configuration, read `.agents/skills/dotfiles-package/SKILL.md`.
-- Before designing, running, or interpreting a skill benchmark, read `.agents/skills/skill-benchmark/SKILL.md`.
 
 ## Shared AI Workflow
 

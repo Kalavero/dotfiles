@@ -202,7 +202,7 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
 
-Repository-specific skills are not published through the plugin: `.agents/skills/dotfiles-package/` covers dotfile configuration, and `.agents/skills/skill-benchmark/` covers the benchmark harness.
+Repository-specific skills are not published through the plugin: `.agents/skills/dotfiles-package/` covers dotfile configuration.
 
 ### Agents
 
@@ -241,16 +241,6 @@ docker run -it kalavero-dotfiles
 - Run `./script/check --strict` after changing commands, agents, skills, manifests, or generated-output rules.
 - Advance the plugin manifest version only as part of an explicit plugin release.
 - Treat `CHANGELOG.md` as release-owned documentation, not a file for routine configuration changes.
-
-### Skill benchmarks
-
-Run paired control and treatment trials for a skill with an agent-specific runner:
-
-```bash
-./script/benchmark-skill --skill dotfiles-package --runner /absolute/path/to/runner --runs 3
-```
-
-The harness gives each trial a disposable repository and objectively grades the result. Treatment has every Kalavero skill available; control has the same set except the skill being measured. See [`benchmarks/README.md`](benchmarks/README.md) for the runner contract and task format. Results are written to the gitignored `benchmark-results/` directory.
 
 ## Credits
 

@@ -10,4 +10,3 @@ requirements-dev.txt
 *.backup.*
 **/*?.local
 .secrets
-benchmark-results/
