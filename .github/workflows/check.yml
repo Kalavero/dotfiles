@@ -39,3 +39,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build the Stow smoke-test image
         run: docker build -t kalavero-dotfiles-check .
+      - name: Run the Stow smoke test
+        run: |
+          docker run --rm kalavero-dotfiles-check sh -ec '
+            for f in /root/.zshrc /root/.zshenv /root/.gitconfig /root/.tmux.conf /root/.aliases /root/.config/starship.toml /root/.local/bin/tat; do
+              [ -e "$f" ] || { echo "MISSING: $f"; exit 1; }
+              case "$(readlink -f "$f")" in
+                /root/kalavero_dotfiles/*) ;;
+                *) echo "NOT STOWED FROM REPO: $f"; exit 1 ;;
+              esac
+            done
+            zsh -ic "alias gs >/dev/null && whence tat >/dev/null"
+            tmux new-session -d -s smoke && tmux kill-session -t smoke
+          '
