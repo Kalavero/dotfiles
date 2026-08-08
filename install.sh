@@ -42,9 +42,20 @@ if ! command -v pi &>/dev/null; then
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 fi
 
+if ! command -v skills &>/dev/null; then
+  echo "==> Installing Skills CLI..."
+  npm install -g --ignore-scripts skills
+fi
+
 if ! command -v opencode &>/dev/null; then
   echo "==> Installing OpenCode..."
   curl -fsSL https://opencode.ai/install | bash
+fi
+
+if command -v skills &>/dev/null; then
+  echo "==> Installing shared agent skills..."
+  skills add kunchenguid/axi -g -y
+  skills add kunchenguid/lavish-axi --skill lavish -g -y
 fi
 
 # 4. Clone TPM (Tmux Plugin Manager) if needed
