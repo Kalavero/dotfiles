@@ -75,7 +75,9 @@ def validate(repo: Path) -> None:
     if matching[0].get("source") != "./plugins/kalavero":
         error(f"{marketplace_path}: {plugin_name} must source ./plugins/kalavero")
 
-    for path in sorted((repo / ".github" / "workflows").glob("*.yml")):
+    workflows_dir = repo / ".github" / "workflows"
+    workflow_paths = sorted([*workflows_dir.glob("*.yml"), *workflows_dir.glob("*.yaml")])
+    for path in workflow_paths:
         workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(workflow, dict) or not isinstance(workflow.get("jobs"), dict):
             error(f"{path}: workflow must define a jobs mapping")
