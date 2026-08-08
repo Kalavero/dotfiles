@@ -93,14 +93,16 @@ font-family = $font_family
 EOF
 }
 
+# 6. Choose the terminal font
 terminal_font="$(prompt_terminal_font)"
 
+# 7. Publish workflow assets and stow packages
 ./sync.sh
 
-# 7. Apply machine-specific Ghostty font override
+# 8. Apply machine-specific Ghostty font override
 write_ghostty_font_override "$terminal_font"
 
-# 8. Set Zsh as default shell
+# 9. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   desired_shell="/bin/zsh"
   if [ -x "$desired_shell" ] && grep -Fxq "$desired_shell" /etc/shells; then

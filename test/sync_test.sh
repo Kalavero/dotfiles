@@ -40,6 +40,7 @@ cat > "$target_home/.codex/config.toml" <<'TOML'
 [projects."/tmp/example"]
 trust_level = "trusted"
 TOML
+chmod 600 "$target_home/.codex/config.toml"
 
 cat > "$target_home/.codex/skills/.system/system-sentinel/SKILL.md" <<'SKILL'
 ---
@@ -88,6 +89,7 @@ assert_contains '  "*": false' "$target_home/.config/opencode/agents/planner.md"
 assert_contains '  read: true' "$target_home/.config/opencode/agents/planner.md"
 assert_contains '[agents]' "$target_home/.codex/config.toml"
 assert_contains 'default_subagent_model = "gpt-5.6-terra"' "$target_home/.codex/config.toml"
+[ "$(stat -f '%Lp' "$target_home/.codex/config.toml")" = "600" ] || fail 'sync should preserve existing config.toml permissions'
 assert_file "$target_home/.codex/skills/.system/system-sentinel/SKILL.md"
 [ ! -L "$target_home/.codex/skills" ] || fail 'sync should not own the Codex skills directory'
 for skill_root in \
@@ -107,7 +109,9 @@ assert_contains 'The user-managed version wins.' "$target_home/.agents/skills/ta
 [ ! -e "$target_home/.codex/skills/agent-brief" ] && [ ! -L "$target_home/.codex/skills/agent-brief" ] || fail 'legacy Kalavero skill links should be removed from the Codex skills directory'
 
 "$REPO_DIR/sync.sh" --target-home "$target_home" > "$test_root/second-run.log" 2>&1
-if find "$target_home" -name '*.backup.*' -print -quit | grep -q .; then
+# -L follows folded directory links so backups inside them (which would live
+# in the repository) are caught too.
+if find -L "$target_home" -name '*.backup.*' -print -quit | grep -q .; then
   fail 'an idempotent second sync should not create backups'
 fi
 
@@ -117,9 +121,8 @@ mv "$target_home/.codex/commands" "$target_home/.codex/commands.repo"
 mv "$target_home/.codex/commands.foreign" "$target_home/.codex/commands"
 
 "$REPO_DIR/sync.sh" --target-home "$target_home" > "$test_root/conflict-run.log" 2>&1
-assert_symlink "$target_home/.codex/commands"
-[ "$(readlink "$target_home/.codex/commands")" = "$REPO_DIR/plugins/kalavero/commands" ] || fail 'sync should install the repository link'
-find "$target_home/.codex" -maxdepth 1 -name 'commands.backup.*' -type l -print -quit | grep -q . || fail 'foreign symlink should be backed up'
+[ "$(readlink "$target_home/.codex/commands")" = "$foreign_dir" ] || fail 'user-managed symlink should be preserved'
+assert_contains 'Preserving user-managed symlink: ~/.codex/commands' "$test_root/conflict-run.log"
 
 ln -s "$foreign_dir" "$target_home/.vimrc"
 "$REPO_DIR/sync.sh" --target-home "$target_home" > "$test_root/foreign-legacy-run.log" 2>&1
@@ -160,5 +163,17 @@ mkdir -p "$dry_home"
 if find "$dry_home" -mindepth 1 -print -quit | grep -q .; then
   fail 'dry-run should not modify the target home'
 fi
+
+stow_conflict_home="$test_root/stow-conflict-home"
+mkdir -p "$stow_conflict_home"
+echo '# user-managed zshrc' > "$stow_conflict_home/.zshrc"
+
+"$REPO_DIR/sync.sh" --target-home "$stow_conflict_home" > "$test_root/stow-conflict-run.log" 2>&1
+assert_symlink "$stow_conflict_home/.zshrc"
+assert_symlink "$stow_conflict_home/.gitconfig"
+assert_symlink "$stow_conflict_home/.tmux.conf"
+zshrc_backup="$(find "$stow_conflict_home" -maxdepth 1 -name '.zshrc.backup.*' -print -quit)"
+[ -n "$zshrc_backup" ] || fail 'a real .zshrc should be backed up before stowing'
+assert_contains '# user-managed zshrc' "$zshrc_backup"
 
 pass 'sync is isolated, idempotent, conflict-safe, and dry-runnable'

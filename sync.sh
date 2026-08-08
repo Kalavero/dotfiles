@@ -65,7 +65,22 @@ link_if_needed() {
 
   if [ -L "$target" ]; then
     [ "$(readlink "$target")" = "$source" ] && return 0
-  elif [ ! -e "$target" ]; then
+    if ! symlink_points_into_repo "$target"; then
+      echo "  Preserving user-managed symlink: ~/$2" >&2
+      return 0
+    fi
+    # Repository-owned link pointing at a stale path: refresh it in place.
+    if [ "$DRY_RUN" = true ]; then
+      echo "  Would relink repository-owned ~/$2"
+    else
+      rm "$target"
+      mkdir -p "$(dirname "$target")"
+      ln -s "$source" "$target"
+    fi
+    return 0
+  fi
+
+  if [ ! -e "$target" ]; then
     if [ "$DRY_RUN" = true ]; then
       echo "  Would link ~/$2"
     else
@@ -140,6 +155,9 @@ remove_old_symlink() {
 backup_if_conflict() {
   local target="$TARGET_HOME/$1"
   local backup
+  local physical_home
+  local physical_repo
+  local physical_parent
 
   if [ -L "$target" ] && symlink_points_into_repo "$target"; then
     return 0
@@ -147,6 +165,20 @@ backup_if_conflict() {
   if [ ! -e "$target" ] && [ ! -L "$target" ]; then
     return 0
   fi
+  # A target reached through a symlinked directory (a tree stow folded into
+  # the repository, or a user-managed directory link) is not a plain file
+  # conflict; backing it up would move files outside the target home. Leave
+  # it for stow to merge or report.
+  physical_home="$(cd "$TARGET_HOME" && pwd -P)"
+  physical_repo="$(cd "$DOTFILES_DIR" && pwd -P)"
+  physical_parent="$(cd "$(dirname "$target")" 2>/dev/null && pwd -P)" || return 0
+  case "$physical_parent" in
+    "$physical_home" | "$physical_home"/*) ;;
+    *) return 0 ;;
+  esac
+  case "$physical_parent" in
+    "$physical_repo" | "$physical_repo"/*) return 0 ;;
+  esac
   # A directory stow already manages (unfolded, with links into the repo) is
   # not a conflict; stow merges into it on the next run.
   if [ -d "$target" ] && [ ! -L "$target" ]; then
@@ -165,6 +197,19 @@ backup_if_conflict() {
     echo "  Backing up existing ~/$1 -> $(basename "$backup")"
     mv "$target" "$backup"
   fi
+}
+
+# Back up real target files that would make stow abort mid-install. Symlinks
+# into the repository restow cleanly, so only non-symlink conflicts move.
+# .stow-local-ignore patterns are not parsed here; the current ignores only
+# cover herdr runtime state that never ships in the package.
+backup_package_conflicts() {
+  local pkg="$1"
+  local file
+
+  while IFS= read -r file; do
+    backup_if_conflict "${file#"$DOTFILES_DIR/$pkg"/}"
+  done < <(find "$DOTFILES_DIR/$pkg" -type f ! -name .stow-local-ignore)
 }
 
 publish_skill_links() {
@@ -370,9 +415,17 @@ configure_codex_subagent_model() {
   fi
 
   mkdir -p "$(dirname "$target")"
-  node "$DOTFILES_DIR/script/configure-codex.mjs" "$target" "$candidate" "$CODEX_SUBAGENT_MODEL"
+  if ! node "$DOTFILES_DIR/script/configure-codex.mjs" "$target" "$candidate" "$CODEX_SUBAGENT_MODEL"; then
+    rm -f "$candidate"
+    return 1
+  fi
 
   [ -e "$candidate" ] || return 0
+  # mv would replace an existing config with default-umask permissions;
+  # carry over the target's mode first (BSD stat, portable on macOS).
+  if [ -e "$target" ]; then
+    chmod "$(stat -f '%Lp' "$target")" "$candidate"
+  fi
   mv "$candidate" "$target"
 }
 
@@ -423,6 +476,7 @@ echo "==> Stowing packages..."
 while IFS= read -r pkg || [ -n "$pkg" ]; do
   [ -n "$pkg" ] || continue
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
+    backup_package_conflicts "$pkg"
     stow_args=(-v -d "$DOTFILES_DIR" -t "$TARGET_HOME")
     # herdr writes runtime state into ~/.config/herdr; folding would turn that
     # directory into a symlink into the repository, bypassing .stow-local-ignore.
