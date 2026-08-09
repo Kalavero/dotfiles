@@ -55,3 +55,10 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 - The `plugins/kalavero/` package is the source of truth for the repo's Claude/OpenCode/Pi workflow assets.
 - `install.sh` publishes those assets and the global agent instructions file into the user locations each tool scans: Claude Code (`~/.claude`), OpenCode (`~/.agents` and `~/.config/opencode`), Pi (`~/.pi/agent`), and Codex (`~/.agents/skills`, `~/.codex`, plus this repo's `AGENTS.md`).
 - When editing a command, agent, or skill, keep the plugin package and the published locations aligned.
+
+## Maintaining this file
+
+Keep this file for knowledge useful to almost every future agent session in this project.
+Do not repeat what the codebase already shows; point to the authoritative file or command instead.
+Prefer rewriting or pruning existing entries over appending new ones.
+When updating this file, preserve this bar for all agents and keep entries concise.
