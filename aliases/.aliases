@@ -1,3 +1,4 @@
+# Clone location: the ae alias below assumes the repo lives at this path.
 DOTFILES=$HOME/kalavero_dotfiles
 os_family=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
 
@@ -158,6 +159,7 @@ then
   alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
   # Homebrew
   alias brewu='brew update && brew upgrade && brew cleanup && brew doctor'
+  # Copies your SSH public key; assumes ~/.ssh/id_rsa.pub exists
   alias mykey="cat $HOME/.ssh/id_rsa.pub | pbcopy"
 fi
 
@@ -165,6 +167,7 @@ if [[ $os_family == 'linux' ]]
 then
   alias ll='ls -lh --color=auto'
   alias ls='ls --color=auto'
+  # Copies your SSH public key; assumes ~/.ssh/id_rsa.pub exists
   alias mykey="cat $HOME/.ssh/id_rsa.pub | xclip -i -selection clipboard"
 fi
 

@@ -14,8 +14,12 @@ Usage: ./sync.sh [--target-home PATH] [--dry-run]
 
 Options:
   --target-home PATH  Publish and stow into PATH instead of the current home.
+                      PATH must be absolute and already exist.
   --dry-run           Report changes without modifying the target home.
+                      Still requires stow (runs stow --simulate).
   -h, --help          Show this help.
+
+HOME must be set; the script refuses to run without it.
 EOF
 }
 

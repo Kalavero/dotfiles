@@ -4,13 +4,13 @@
     "name": "Andre Verissimo"
   },
   "metadata": {
-    "description": "Andre's personal Claude Code plugin — workflow skills and commands."
+    "description": "Andre's personal Claude Code plugin — workflow commands, skills, and agents."
   },
   "plugins": [
     {
       "name": "kalavero",
       "source": "./plugins/kalavero",
-      "description": "Personal workflow skills: technical approach documents and more."
+      "description": "Personal engineering workflow plugin: commands, skills, and agents for ticket-to-PR workflows, technical approach documents, CI watching, and more."
     }
   ]
 }
