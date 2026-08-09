@@ -36,6 +36,7 @@ Map each proposed task to a ticket:
 - **Description** — the task's body from the TAD, plus a link back to the TAD document. Each ticket must be self-contained: an engineer picking it up should not need the conversation, only the ticket and the TAD link.
 - **Estimate** — assign a relative point estimate using the scale below. Carry over the TAD's estimate if it has one; otherwise derive it. Map the points onto the tracker's own estimate field when it has one.
 - **Dependencies** — encode the TAD's sequencing section: blocking relationships where the tracker supports them, otherwise a "Depends on: ..." line in the description.
+- **Phase** — mark whether the task belongs to the MVP cut or later work (from the TAD's sequencing, or the spec's MVP cut when one exists), via the tracker's label/milestone field or a "Phase: MVP" line in the description.
 
 ### Estimation scale
 

@@ -48,7 +48,7 @@ If the user provides:
 - **Ticket IDs** (e.g., `ABC-1234`) — fetch each via the connected tracker MCP. Pull description, acceptance criteria, comments.
 - **Nothing** — proceed with `$ARGUMENTS` and the conversation.
 
-A PRD is the typical anchor. Assume the reader has read it — the TAD should not re-explain product motivation in detail.
+A PRD or a spec under `docs/specs/` (from the `idea-spec` skill) is the typical anchor. Assume the reader has read it — the TAD should not re-explain product motivation in detail.
 
 ### 1.2 Summarize what you know
 
