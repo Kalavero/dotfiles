@@ -11,7 +11,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `aliases/` | Shell aliases | Git, Docker, Ruby/Rails, file navigation |
 | `neovim/` | Neovim (Lua) | [lazy.nvim](https://github.com/folke/lazy.nvim), Gruvbox, Telescope, LSP, Treesitter |
 | `tmux/` | Tmux | Ctrl-a prefix, vim-aware navigation, TPM |
-| `git/` | Git | 60+ aliases, nvimdiff mergetool |
+| `git/` | Git | 39 aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
 | `bin/` | Scripts | `tat` — tmux attach-or-create |
 | `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, font chosen at install (Hack or JetBrainsMono Nerd Font), option-as-alt, 0.8 opacity, blur 50 |
@@ -19,6 +19,8 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
 
 > `iterm2/` is not a stow package — it holds manual setup notes ([`iterm2/README.md`](iterm2/README.md)) for the alternative terminal, which is configured through its GUI rather than a dotfile.
+>
+> `plugins/` is not a stow package either — it is published by `sync.sh` into the locations each AI tool scans (`~/.claude`, `~/.agents`, `~/.config/opencode`, `~/.pi/agent`, `~/.codex`).
 
 ## Install
 
@@ -130,14 +132,13 @@ Prefix: **Ctrl-a**
 | Alias | Command |
 |-------|---------|
 | `gs` | `git status` |
-| `gco` | `git checkout` |
 | `gnb` | `git checkout -b` |
 | `gpl` / `gp` | `git pull` / `git push` |
 | `gpsh` | Push current branch |
 | `gd` / `gdc` | Diff / diff cached |
 | `gl` | Git log (graph) |
-| `dc` | `docker-compose` |
-| `dcr` | `docker-compose run --rm --service-ports` |
+| `dc` | `docker compose` |
+| `dcr` | `docker compose run --rm --service-ports` |
 | `rs` | `rspec spec` |
 | `rc` | `rails c` |
 | `vim` | `nvim` |

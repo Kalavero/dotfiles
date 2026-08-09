@@ -2,6 +2,15 @@
 
 All notable changes to these dotfiles are documented here.
 
+## 2026-06-17
+
+### Added
+
+- **Three plugin loop commands** — `/kalavero:green` (drive the test suite to
+  green), `/kalavero:ci-watch` (watch the branch's CI run and fix failures until
+  it passes), and `/kalavero:babysit-prs` (check open PRs for CI failures,
+  review comments, conflicts, or merge readiness).
+
 ## 2026-06-15
 
 ### Added

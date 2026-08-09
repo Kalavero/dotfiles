@@ -18,7 +18,7 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 ## Neovim Config
 
 - Entry point is `neovim/.config/nvim/init.lua`; modules live under `lua/config/` (options, keymaps, autocmds, lazy bootstrap) and `lua/plugins/` (one lazy.nvim spec per file).
-- Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> nvim-lint, CoC -> mason+lspconfig+nvim-cmp, airline -> lualine, tComment -> Comment.nvim, vim-surround -> nvim-surround. LSP servers: ts_ls, eslint, ruby_lsp, lua_ls.
+- Key plugin migrations: CtrlP -> telescope, NERDTree -> nvim-tree, Syntastic -> nvim-lint, CoC -> mason+lspconfig+nvim-cmp, airline -> lualine, tComment -> Comment.nvim, vim-surround -> nvim-surround. LSP servers: ts_ls, ruby_lsp, lua_ls.
 
 ## Local Overrides
 

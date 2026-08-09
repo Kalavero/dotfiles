@@ -10,8 +10,6 @@ description: >
 
 A refactor changes structure while preserving behavior. This skill produces a plan where behavior preservation is verified at every step, not asserted at the end.
 
-This complements the code-simplification skill: that one covers *what* to simplify; this one covers *how* to do it without breaking anything.
-
 ## Phase 1 — Behavior inventory
 
 Before planning any change:

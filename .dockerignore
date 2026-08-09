@@ -4,7 +4,6 @@
 .ruby-lsp
 .DS_Store
 .venv
-tasks
 test
 requirements-dev.txt
 *.backup.*
