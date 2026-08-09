@@ -39,6 +39,8 @@ The install script will:
 6. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)
 7. Set Zsh as the default shell
 
+The installer is interactive: the font prompt has no bypass flag, so unattended runs block waiting for an answer. It also runs `no-mistakes init` inside this repo, installing a commit gate on the dotfiles checkout itself — not just on your projects.
+
 ### Sync Changes
 
 ```bash
@@ -47,9 +49,11 @@ The install script will:
 
 Reapplies tracked symlinks and stows packages without reinstalling dependencies. It also defaults subagents to lower-cost models: Haiku in Claude Code and GPT-5.6 Terra in OpenCode and Codex. Existing explicit harness overrides are preserved. Pi has no built-in subagents, so no Pi model override is generated.
 
-Use `./sync.sh --dry-run` to preview changes. For isolated verification, `./sync.sh --target-home /absolute/path` publishes into an existing temporary home instead of your real home directory. The packages to stow are defined once in `stow-packages.txt`.
+When a tracked config conflicts with an existing real file (say, a hand-written `~/.zshrc`), sync.sh moves it aside to `<file>.backup.<timestamp>` without asking — the original is renamed, never deleted. Symlinks you created yourself are left alone: a user-managed symlink at a published path wins over the repo's version, so check for stray links if a change doesn't seem to apply.
 
-The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and apply that choice to Ghostty.
+Use `./sync.sh --dry-run` to preview changes. `--dry-run` still runs `stow --simulate`, so `stow` must be installed even for a preview. For isolated verification, `./sync.sh --target-home /absolute/path` publishes into an existing temporary home instead of your real home directory; the path must be absolute and already exist. The packages to stow are defined once in `stow-packages.txt`.
+
+The installer will also prompt you to pick either Hack Nerd Font or JetBrainsMono Nerd Font and applies that choice to Ghostty automatically. iTerm2 users set the same font by hand — see [`iterm2/README.md`](iterm2/README.md).
 It installs Herdr and stows `~/.config/herdr/config.toml` with tmux-style keybindings.
 
 After install, open Neovim — plugins will auto-install on first launch.
@@ -143,6 +147,8 @@ Prefix: **Ctrl-a**
 | `rc` | `rails c` |
 | `vim` | `nvim` |
 
+Two aliases make machine assumptions: `ae` assumes the repo is cloned at `~/kalavero_dotfiles` (the default install path), and `mykey` expects an RSA public key at `~/.ssh/id_rsa.pub`.
+
 ## Customization
 
 Override any config locally without touching tracked files:
@@ -202,6 +208,8 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `migration-safety` | Writing or reviewing database migrations |
 | `flaky-spec` | A test fails intermittently or only in CI |
 | `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
+
+Commands occasionally suggest a skill as if it were a command (e.g. `/kalavero:flaky-spec`, `/kalavero:tad`). That skill-as-command form works in Claude Code — the skill just lives in this table, not under Commands.
 
 Repository-specific skills are not published through the plugin: `.agents/skills/dotfiles-package/` covers dotfile configuration.
 

@@ -3,6 +3,8 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 STRICT=false
+# KALAVERO_SHELLCHECK_BIN overrides the ShellCheck binary; when unset and no
+# binary is found on PATH, that check is skipped (fails only with --strict).
 SHELLCHECK_BIN="${KALAVERO_SHELLCHECK_BIN:-}"
 PYTHON_BIN="python3"
 

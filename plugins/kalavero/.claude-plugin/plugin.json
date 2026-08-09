@@ -1,6 +1,6 @@
 {
   "name": "kalavero",
-  "description": "Personal workflow skills: technical approach documents and more.",
+  "description": "Personal engineering workflow plugin: commands, skills, and agents for ticket-to-PR workflows, technical approach documents, CI watching, and more.",
   "version": "1.0.0",
   "author": {
     "name": "Andre Verissimo"
