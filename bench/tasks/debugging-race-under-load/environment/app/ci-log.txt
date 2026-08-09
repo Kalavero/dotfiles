@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.8, pytest-8.3.4, pluggy-1.5.0
+rootdir: /app
+collected 5 items
+
+tests/test_inventory.py ....                                       [ 80%]
+tests/test_load.py F                                               [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_no_oversell_under_load __________________________
+
+    total = sum(sold)
+>   assert total <= INITIAL_STOCK, f"oversold: {total} units sold of {INITIAL_STOCK} in stock"
+E   AssertionError: oversold: 107 units sold of 100 in stock
+
+tests/test_load.py:29: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_load.py::test_no_oversell_under_load
+========================= 1 failed, 4 passed in 3.42s =========================
+
+# CI notes (from the last 20 pipeline runs of this exact commit):
+#   - this failure showed up 3 times out of 20, never on a re-run of the same job
+#   - re-running the failed job without any changes usually passes
+#   - the failure never reproduces when tests run with `-k inventory`

@@ -7,6 +7,7 @@ This repository is a personal macOS dotfiles setup managed with GNU Stow.
 - Stow packages are the directories listed in `stow-packages.txt`.
 - Package contents mirror paths under `$HOME`.
 - `iterm2/` is documentation only and is not stowed.
+- `bench/` is repo tooling (the skills A/B benchmark), not a stow package — see `bench/README.md`.
 
 ## Common Commands
 

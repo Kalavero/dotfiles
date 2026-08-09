@@ -1,0 +1,11 @@
+[project]
+name = "exportly"
+version = "0.3.1"
+description = "Export usage records to CSV for billing and customer success"
+requires-python = ">=3.10"
+
+[project.scripts]
+exportly = "exportly.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,14 @@
+# Nightly CI — main branch — python -m pytest -q
+
+[2026-07-06T02:11:42Z] .....  5 passed in 0.04s
+[2026-07-20T02:09:13Z] .....  5 passed in 0.03s
+[2026-08-04T02:12:55Z] .....  5 passed in 0.04s
+[2026-08-05T02:10:31Z] FF...  2 failed, 3 passed in 0.05s
+  FAILED tests/test_billing.py::test_recent_signup_has_active_trial - assert False
+  FAILED tests/test_billing.py::test_recent_signup_has_days_left - assert 0 > 0
+[2026-08-06T02:08:19Z] FF...  2 failed, 3 passed in 0.04s
+  FAILED tests/test_billing.py::test_recent_signup_has_active_trial - assert False
+  FAILED tests/test_billing.py::test_recent_signup_has_days_left - assert 0 > 0
+[2026-08-07T02:13:02Z] FF...  2 failed, 3 passed in 0.05s
+  FAILED tests/test_billing.py::test_recent_signup_has_active_trial - assert False
+  FAILED tests/test_billing.py::test_recent_signup_has_days_left - assert 0 > 0
