@@ -16,7 +16,6 @@ herdr/.config/herdr/.plugins.lock
 herdr/.config/herdr/session.json
 herdr/.config/herdr/release-notes.json
 bench/jobs/
-bench/results/
 .cache/
 __pycache__/
 *.pyc

@@ -42,6 +42,27 @@ def load_rollouts(jobs_root: pathlib.Path):
             except (json.JSONDecodeError, OSError):
                 pass
         rewards = data.get("rewards") or {}
+        # Did the agent obtain the bundled skill's content? codex-acp reads it
+        # as prompt-visible files, so look for a completed tool call touching
+        # SKILL.md in the trajectory (skill_invocations stays 0 for codex).
+        got_skill = None
+        if data.get("skill_mode") == "with-skill":
+            got_skill = False
+            for traj in result_path.parent.glob("*/acp_trajectory.jsonl"):
+                try:
+                    for line in traj.open():
+                        ev = json.loads(line)
+                        if (
+                            ev.get("type") == "tool_call"
+                            and ev.get("status") == "completed"
+                            and "SKILL.md" in str(ev.get("title", ""))
+                        ):
+                            got_skill = True
+                            break
+                except OSError:
+                    continue
+                if got_skill:
+                    break
         rollouts.append(
             {
                 "task": data.get("task_name"),
@@ -50,6 +71,7 @@ def load_rollouts(jobs_root: pathlib.Path):
                 "arm": data.get("skill_mode"),
                 "reward": rewards.get("reward"),
                 "skill_invocations": data.get("n_skill_invocations", 0),
+                "got_skill": got_skill,
                 "input_tokens": agent.get("n_input_tokens") or 0,
                 "output_tokens": agent.get("n_output_tokens") or 0,
                 "total_tokens": agent.get("total_tokens") or 0,
@@ -64,10 +86,15 @@ def load_rollouts(jobs_root: pathlib.Path):
 
 
 def group_stats(records):
+    # Errored rollouts (hung agent, ACP failure) carry no reward and no
+    # honest token counts — exclude them from every statistic and report
+    # them separately.
+    n_errors = sum(1 for r in records if r["error"])
+    records = [r for r in records if not r["error"]]
     rewards = [r["reward"] for r in records if isinstance(r["reward"], (int, float))]
-    totals = [r["total_tokens"] for r in records]
-    inputs = [r["input_tokens"] for r in records]
-    outputs = [r["output_tokens"] for r in records]
+    totals = [r["total_tokens"] for r in records if r["token_source"] != "unavailable"]
+    inputs = [r["input_tokens"] for r in records if r["token_source"] != "unavailable"]
+    outputs = [r["output_tokens"] for r in records if r["token_source"] != "unavailable"]
     walls = [r["wall_sec"] for r in records if isinstance(r["wall_sec"], (int, float))]
     return {
         "n": len(records),
@@ -81,8 +108,9 @@ def group_stats(records):
         "output_tokens_mean": statistics.mean(outputs) if outputs else None,
         "token_source": sorted({r["token_source"] for r in records}),
         "wall_sec_mean": statistics.mean(walls) if walls else None,
-        "errors": sum(1 for r in records if r["error"]),
+        "errors": n_errors,
         "skill_invocations": [r["skill_invocations"] for r in records],
+        "skill_acquired": sum(1 for r in records if r["got_skill"]),
     }
 
 
@@ -108,6 +136,10 @@ def main() -> int:
     groups = {}
     for r in rollouts:
         groups.setdefault((r["task"], r["model"], r["arm"]), []).append(r)
+        # Shadow group: with-skill rollouts where the skill content was
+        # actually obtained (a completed SKILL.md read in the trajectory).
+        if r["arm"] == "with-skill" and r["got_skill"]:
+            groups.setdefault((r["task"], r["model"], "with-skill (acquired)"), []).append(r)
     stats = {key: group_stats(recs) for key, recs in groups.items()}
 
     tasks = sorted({k[0] for k in groups})
@@ -130,17 +162,20 @@ def main() -> int:
         )
         lines.append("|---|---|---|---|---|---|---|---|")
         for model in models + ([None] if (task, None, "no-skill") in groups or any(k[0] == task and k[1] is None for k in groups) else []):
-            for arm in ("no-skill", "with-skill"):
+            for arm in ("no-skill", "with-skill", "with-skill (acquired)"):
                 key = (task, model, arm)
                 if key not in stats:
                     continue
                 s = stats[key]
                 if arm == "no-skill" and any(v > 0 for v in s["skill_invocations"]):
                     contamination.append((task, model))
+                arm_label = arm
+                if arm == "with-skill":
+                    arm_label = f"with-skill (skill read {s['skill_acquired']}/{s['n']})"
                 lines.append(
                     "| {model} | {arm} | {n} | {mean} | {lo}–{hi} | {tin}/{tout}/{ttot} | {wall} | {src} |".format(
                         model=model or "oracle",
-                        arm=arm,
+                        arm=arm_label,
                         n=s["n"],
                         mean=fmt(s["reward_mean"]),
                         lo=fmt(s["reward_min"]),
@@ -154,18 +189,22 @@ def main() -> int:
                 )
         # delta rows
         for model in models:
-            a = stats.get((task, model, "with-skill"))
-            b = stats.get((task, model, "no-skill"))
-            if a and b and a["reward_mean"] is not None and b["reward_mean"] is not None:
-                d_reward = a["reward_mean"] - b["reward_mean"]
-                d_tokens = None
-                if a["total_tokens_mean"] and b["total_tokens_mean"]:
-                    d_tokens = a["total_tokens_mean"] - b["total_tokens_mean"]
-                lines.append("")
-                lines.append(
-                    f"**{model} delta (with − without):** reward {d_reward:+.2f}, "
-                    f"total tokens {fmt(d_tokens, 0) if d_tokens is not None else 'unavailable'}"
-                )
+            for with_key, label in (
+                ("with-skill", "with − without"),
+                ("with-skill (acquired)", "acquired-only with − without"),
+            ):
+                a = stats.get((task, model, with_key))
+                b = stats.get((task, model, "no-skill"))
+                if a and b and a["reward_mean"] is not None and b["reward_mean"] is not None:
+                    d_reward = a["reward_mean"] - b["reward_mean"]
+                    d_tokens = None
+                    if a["total_tokens_mean"] and b["total_tokens_mean"]:
+                        d_tokens = a["total_tokens_mean"] - b["total_tokens_mean"]
+                    lines.append("")
+                    lines.append(
+                        f"**{model} delta ({label}):** reward {d_reward:+.2f}, "
+                        f"total tokens {fmt(d_tokens, 0) if d_tokens is not None else 'unavailable'}"
+                    )
         lines.append("")
 
     if contamination:

@@ -48,7 +48,8 @@ later if a credential becomes available.
 - `analyze.py` — aggregates jobs dirs into reward + token A/B tables.
 - `dev/local-check.sh` — build a task image and run oracle + verifier exactly
   like benchflow does, without benchflow. Authoring/iteration tool.
-- `jobs/`, `results/` — run artifacts (gitignored).
+- `jobs/` — raw run artifacts (gitignored). `results/` — committed analysis
+  output (`analyze.py` products: `SUMMARY.md`, `summary.md`, `summary.json`).
 
 ## Protocol (baked into `run.sh`)
 

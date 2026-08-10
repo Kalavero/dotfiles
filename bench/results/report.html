@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kalavero Shared Skills — A/B Benchmark Analysis</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 1100px; margin: 2em auto; padding: 0 1.5em; line-height: 1.55; color: #222; }
+    h1 { font-size: 1.9em; border-bottom: 2px solid #4a90e2; padding-bottom: 0.3em; }
+    h2 { font-size: 1.4em; margin-top: 1.8em; color: #1f3a5f; }
+    h3 { font-size: 1.15em; margin-top: 1.4em; color: #2c4a6e; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+    th, td { border: 1px solid #c7d3df; padding: 0.5em 0.7em; text-align: left; }
+    th { background: #eef4fb; font-weight: 600; }
+    tr:nth-child(even) { background: #f8fafc; }
+    .positive { color: #1e7e34; font-weight: 600; }
+    .negative { color: #c82333; font-weight: 600; }
+    .neutral { color: #6c757d; }
+    ul { margin-top: 0.4em; }
+    code { background: #f1f3f5; padding: 0.15em 0.35em; border-radius: 4px; font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; }
+    .meta { color: #586069; font-size: 0.9em; margin-bottom: 1.5em; }
+  </style>
+</head>
+<body>
+
+<h1>Kalavero Shared Skills — A/B Benchmark Analysis</h1>
+<p class="meta">280 rollouts across 17 task packages and 9 shared skills, tested on <code>gpt-5.4-mini</code> and <code>gpt-5.5</code> with and without each skill injected.</p>
+
+<h2>Verdict Summary</h2>
+<table>
+<thead>
+<tr><th>Skill</th><th>gpt-5.4-mini delta</th><th>gpt-5.5 delta</th><th>Verdict</th></tr>
+</thead>
+<tbody>
+<tr><td>agent-brief</td><td class="positive">+0.11</td><td class="positive">+0.30</td><td><strong>Strong helper</strong></td></tr>
+<tr><td>planning-and-task-breakdown (feature)</td><td class="positive">+0.21</td><td class="positive">+0.44</td><td><strong>Strong helper</strong></td></tr>
+<tr><td>planning-and-task-breakdown (parallel)</td><td class="positive">+0.13</td><td class="positive">+0.38</td><td><strong>Strong helper</strong></td></tr>
+<tr><td>tad-behavior-change</td><td class="positive">+0.05</td><td class="positive">+0.32</td><td><strong>Helper on gpt-5.5</strong></td></tr>
+<tr><td>tad-feature-doc</td><td class="positive">+0.10</td><td class="positive">+0.21</td><td><strong>Helper</strong></td></tr>
+<tr><td>migration-safety-safe-migration</td><td class="positive">+0.06</td><td class="positive">+0.16</td><td><strong>Helper</strong></td></tr>
+<tr><td>refactoring-plan (execute)</td><td class="neutral">0.00</td><td class="positive">+0.03</td><td><strong>Ceiling effect</strong> — task too easy</td></tr>
+<tr><td>refactoring-plan (tangled)</td><td class="negative">-0.10</td><td class="positive">+0.19</td><td><strong>Mixed</strong> — hurts on mini</td></tr>
+<tr><td>debugging-duplicate-rows-join</td><td class="negative">-0.02</td><td class="positive">+0.16</td><td><strong>Mixed</strong> — helps on gpt-5.5 only</td></tr>
+<tr><td>debugging-race-under-load</td><td class="positive">+0.03</td><td class="negative">-0.03</td><td><strong>Neutral</strong></td></tr>
+<tr><td>flaky-spec-order-dependent-pair</td><td class="neutral">0.00</td><td class="neutral">0.00</td><td><strong>Ceiling effect</strong> — task too easy</td></tr>
+<tr><td>flaky-spec-time-bomb</td><td class="neutral">0.00</td><td class="positive">+0.12</td><td><strong>Helper on gpt-5.5 only</strong></td></tr>
+<tr><td>incremental-implementation (cli-slices)</td><td class="neutral">0.00</td><td class="neutral">0.00</td><td><strong>No measurable effect</strong></td></tr>
+<tr><td>incremental-implementation (risk-first)</td><td class="positive">+0.01</td><td class="neutral">0.00</td><td><strong>No measurable effect</strong></td></tr>
+<tr><td>tad-to-tickets-basic</td><td class="negative">-0.17</td><td class="negative">-0.02</td><td><strong>Hurts on gpt-5.4-mini</strong></td></tr>
+<tr><td>tad-to-tickets-split-eight-point</td><td class="negative">-0.13</td><td class="neutral">0.00</td><td><strong>Hurts on gpt-5.4-mini</strong></td></tr>
+<tr><td>migration-safety-subtle-review</td><td class="negative">-0.01</td><td class="neutral">0.00</td><td><strong>Neutral</strong></td></tr>
+</tbody>
+</table>
+
+<h2>Key Findings</h2>
+
+<h3>1. Skills that deliver clear value</h3>
+<ul>
+<li><strong>agent-brief</strong> is the biggest winner, especially on gpt-5.5 (+0.30 mean reward). It turns rough ideas into well-formed briefs with acceptance criteria and cited paths.</li>
+<li><strong>planning-and-task-breakdown</strong> shows the largest and most consistent lift across both models (+0.13 to +0.44). Both the feature-breakdown and parallel-breakdown variants benefit from the skill.</li>
+<li><strong>tad</strong> (behavior-change and feature-doc) and <strong>migration-safety-safe-migration</strong> show modest but consistent gains.</li>
+</ul>
+
+<h3>2. Skills with no measurable effect</h3>
+<ul>
+<li><strong>incremental-implementation</strong> shows essentially zero delta on both tasks and both models. The skill is not being invoked by the agent in the benchmark (<code>n_skill_invocations: 0</code> across the board), so it cannot influence behavior. The current trigger/description does not cause the agent to self-select it for implementation tasks.</li>
+<li><strong>refactor-plan-execute</strong> hits a ceiling: both arms score near 1.0, so the skill cannot demonstrate value on this task. The skill delta is carried by the plan-writing task (<code>refactor-plan-tangled-module</code>).</li>
+<li><strong>flaky-spec-order-dependent-pair</strong> also ceilings at 1.0 in both arms.</li>
+</ul>
+
+<h3>3. Skills that hurt on the smaller model</h3>
+<ul>
+<li><strong>tad-to-tickets</strong> is negative on gpt-5.4-mini for both tasks (-0.17 and -0.13). The skill's hard requirement to ask for user approval before creating tickets conflicts with autonomous benchmark tasks that expect JSON ticket files to be written directly. The skill is also not reliably self-invoked.</li>
+<li><strong>refactor-plan-tangled-module</strong> is -0.10 on gpt-5.4-mini. The skill is not reliably invoked, and when the model tries to follow it the extra planning structure appears to distract from the concrete task of writing the plan to the requested file path.</li>
+<li><strong>debugging-duplicate-rows-join</strong> is -0.02 on gpt-5.4-mini (but +0.16 on gpt-5.5), suggesting the smaller model does not benefit from the structured triage.</li>
+</ul>
+
+<h3>4. Token-usage picture</h3>
+<p>Token deltas are small relative to the absolute task cost (most arms sit around 17–28k total tokens). The notable exceptions:</p>
+<ul>
+<li><strong>migration-safety-safe-migration with-skill</strong> uses ~5k more tokens on gpt-5.4-mini, but also scores +0.06 higher.</li>
+<li><strong>planning-parallel-breakdown with-skill</strong> uses ~3k more tokens on gpt-5.4-mini for a +0.13 reward gain.</li>
+<li><strong>refactor-plan-tangled-module with-skill</strong> on gpt-5.5 uses ~10k more input tokens for a +0.19 reward gain.</li>
+</ul>
+<p>Wall-time generally tracks model size and token volume; no skill introduces a dramatic slowdown except when the agent gets stuck in a long planning loop.</p>
+
+<h2>Recommendations (for a future iteration)</h2>
+<ol>
+<li><strong>incremental-implementation:</strong> Rewrite the front-matter trigger so the agent self-invokes it on implementation tasks. Add explicit "commit after every slice" and "run tests before continuing" language tied to the verifier's cadence check.</li>
+<li><strong>tad-to-tickets:</strong> Remove or conditionalize the "ask for approval before creating" rule when the environment expects local JSON files. Add an auto-trigger checklist.</li>
+<li><strong>refactor-plan:</strong> Add an explicit "write the plan to the file path requested by the task" phase and an auto-trigger checklist.</li>
+<li><strong>debugging-and-error-recovery:</strong> Add a stronger auto-trigger and consider condensing the triage checklist for the smaller model.</li>
+<li><strong>Task hardening:</strong> <code>refactor-plan-execute</code> and <code>flaky-spec-order-dependent-pair</code> both ceiling without the skill; if measuring skill value on them matters, the tasks need to be made harder for the no-skill arm.</li>
+</ol>
+
+<h2>Caveats</h2>
+<ul>
+<li>One planning-feature-breakdown gpt-5.5 with-skill rep and one backfill rep were still running when the captain asked to stop; the final analysis is based on 280 completed rollouts.</li>
+<li><code>n_skill_invocations</code> is 0 for most with-skill rollouts. Benchflow exposes skills to the agent, but the agent often does not explicitly invoke them. Some skills still show reward gains, likely because the skill content leaks into the system context. Skills with zero invocations and zero deltas are not being used at all.</li>
+</ul>
+
+</body>
+</html>
