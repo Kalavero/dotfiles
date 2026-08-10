@@ -19,7 +19,7 @@ Resolve `$ARGUMENTS` into an issue:
 
 ### 1. Analysis Phase
 
-- Analyze the <issue> thoroughly, following the kalavero:debugging-and-error-recovery skill: reproduce first, then localize
+- Analyze the <issue> thoroughly: reproduce first, then localize and identify the root cause
 - Trace the code path end-to-end — understand the full flow, not just the suspected failure point
 - Probe for what diagnostic access exists and use it: an app console (e.g. Rails console) for read-only production data queries to verify assumptions (record state, associations, audit history), and any connected observability MCPs (error tracker, APM, logs) for related errors and traces
 - Identify silent failure points — places where errors are swallowed or operations are skipped without logging

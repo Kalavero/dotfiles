@@ -52,7 +52,7 @@ Then:
 - **Not met** criteria become a gap list: what is missing, and why the change falls short.
 - Offer to post the table as a PR comment, or append it to the spec document.
 
-For each gap, offer to file a follow-up ticket using the same tracker discovery as the `tad-to-tickets` skill (tracker MCP, then `gh`, then stop and ask). **Do not create any ticket until the user explicitly approves the full list** — this is a hard requirement.
+For each gap, offer to file a follow-up ticket by discovering the tracker via its connected MCP, then `gh`, then stopping to ask if neither is available. **Do not create any ticket until the user explicitly approves the full list** — this is a hard requirement.
 
 ## Guidelines
 

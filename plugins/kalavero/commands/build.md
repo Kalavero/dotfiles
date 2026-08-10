@@ -7,8 +7,6 @@ description: Implement the next task incrementally — build, test, verify, comm
   Source: https://github.com/addyosmani/agent-skills (MIT License)
 -->
 
-Invoke the kalavero:incremental-implementation skill.
-
 Pick the next pending task from the plan. For each task:
 
 1. Read the task's acceptance criteria
@@ -20,4 +18,4 @@ Pick the next pending task from the plan. For each task:
 7. Commit with a descriptive message
 8. Mark the task complete and move to the next one
 
-If any step fails, follow the kalavero:debugging-and-error-recovery skill.
+If any step fails, reproduce it, localize the failing code path, identify the root cause, and fix the cause rather than the symptom.
