@@ -201,6 +201,8 @@ Skills are picked up by Claude automatically when a task matches their descripti
 
 | Skill | Kicks in when... |
 |-------|------------------|
+| `idea-spec` | Shaping a raw idea into a validated spec with success criteria |
+| `spec-check` | Checking a built change against its spec's success criteria |
 | `tad` | Writing a technical approach document before coding |
 | `tad-to-tickets` | An approved TAD needs to become tracker tickets |
 | `agent-brief` | Delegating work to an AI coding agent from a rough idea |

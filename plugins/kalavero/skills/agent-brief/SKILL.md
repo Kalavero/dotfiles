@@ -69,3 +69,5 @@ Before delivering, verify the brief stands alone:
 - Are the non-goals doing real work (naming the adjacent thing the agent would plausibly wander into)?
 
 Output to chat for pasting, or write to `tasks/brief-<slug>.md` on request.
+
+If the brief turns out design-heavy — multiple systems, real trade-offs, an approach the user hasn't settled — point at the `tad` skill instead of forcing it into a brief.
