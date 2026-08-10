@@ -204,14 +204,10 @@ Skills are picked up by Claude automatically when a task matches their descripti
 | `idea-spec` | Shaping a raw idea into a validated spec with success criteria |
 | `spec-check` | Checking a built change against its spec's success criteria |
 | `tad` | Writing a technical approach document before coding |
-| `tad-to-tickets` | An approved TAD needs to become tracker tickets |
 | `agent-brief` | Delegating work to an AI coding agent from a rough idea |
-| `refactor-plan` | Restructuring code where changing behavior is the main risk |
-| `migration-safety` | Writing or reviewing database migrations |
-| `flaky-spec` | A test fails intermittently or only in CI |
-| `planning-and-task-breakdown`, `incremental-implementation`, `debugging-and-error-recovery` | Core engineering methodology (vendored, see Credits) |
+| `planning-and-task-breakdown` | Breaking work into ordered, implementable tasks |
 
-Commands occasionally suggest a skill as if it were a command (e.g. `/kalavero:flaky-spec`, `/kalavero:tad`). That skill-as-command form works in Claude Code — the skill just lives in this table, not under Commands.
+Commands occasionally suggest a skill as if it were a command (e.g. `/kalavero:tad`). That skill-as-command form works in Claude Code — the skill just lives in this table, not under Commands.
 
 Repository-specific skills are not published through the plugin: `.agents/skills/dotfiles-package/` covers dotfile configuration.
 
@@ -257,4 +253,4 @@ docker run -it kalavero-dotfiles
 
 Inspired by [Campus Code dotfiles](https://github.com/campuscode/cc_dotfiles), [Skwp](https://github.com/skwp/dotfiles), and [ThoughtBot](https://github.com/thoughtbot/dotfiles).
 
-Parts of the Claude Code plugin (the `build`/`plan` commands, the core methodology skills, and the `code-reviewer`/`test-engineer` agents) are adapted from [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills) (MIT License), with attribution comments in each file.
+Parts of the Claude Code plugin (the `build`/`plan` commands, the `planning-and-task-breakdown` skill, and the `code-reviewer`/`test-engineer` agents) are adapted from [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills) (MIT License), with attribution comments in each file.
