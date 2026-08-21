@@ -42,7 +42,7 @@ jobs:
       - name: Run the Stow smoke test
         run: |
           docker run --rm kalavero-dotfiles-check sh -ec '
-            for f in /root/.zshrc /root/.zshenv /root/.gitconfig /root/.tmux.conf /root/.aliases /root/.config/starship.toml /root/.local/bin/tat; do
+            for f in /root/.zshrc /root/.zshenv /root/.gitconfig /root/.tmux.conf /root/.aliases /root/.config/starship.toml /root/.local/bin/tat /root/.local/bin/ruby_qa; do
               [ -e "$f" ] || { echo "MISSING: $f"; exit 1; }
               case "$(readlink -f "$f")" in
                 /root/kalavero_dotfiles/*) ;;

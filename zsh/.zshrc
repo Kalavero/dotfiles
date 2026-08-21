@@ -77,12 +77,6 @@ fi
 
 setopt interactivecomments
 
-# RVM
-if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
-  source "$HOME/.rvm/scripts/rvm"
-  export PATH="$PATH:$HOME/.rvm/bin"
-fi
-
 # NVM (lazy-loaded on first use to keep shell startup fast)
 export NVM_DIR="$HOME/.nvm"
 _nvm_lazy_load() {
@@ -100,6 +94,11 @@ pnpm() { _nvm_lazy_load; pnpm "$@"; }
 export BUN_INSTALL="$HOME/.bun"
 [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# RVM must run after other PATH changes so its selected Ruby stays active.
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  source "$HOME/.rvm/scripts/rvm"
+fi
 
 # Starship prompt (must be last)
 eval "$(starship init zsh)"

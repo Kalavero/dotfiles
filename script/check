@@ -42,7 +42,7 @@ optional_check_missing() {
 cd "$REPO_DIR"
 
 step "Checking Bash and Zsh syntax"
-bash -n install.sh sync.sh script/check test/*.sh
+bash -n install.sh sync.sh script/check bin/.local/bin/* test/*.sh
 zsh -n zsh/.zshrc zsh/.zshenv aliases/.aliases zsh/.zsh/functions/*
 
 step "Checking JavaScript syntax"
@@ -74,7 +74,7 @@ if [ -z "$SHELLCHECK_BIN" ] && command -v shellcheck >/dev/null 2>&1; then
   SHELLCHECK_BIN="$(command -v shellcheck)"
 fi
 if [ -n "$SHELLCHECK_BIN" ]; then
-  "$SHELLCHECK_BIN" install.sh sync.sh script/check test/*.sh
+  "$SHELLCHECK_BIN" install.sh sync.sh script/check bin/.local/bin/* test/*.sh
 else
   optional_check_missing "ShellCheck" "brew install shellcheck"
 fi

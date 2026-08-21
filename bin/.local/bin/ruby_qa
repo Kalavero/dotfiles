@@ -1,0 +1,337 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION='1.0.0'
+
+usage() {
+  cat <<'EOF'
+bin: ~/.local/bin/ruby_qa
+description: Run branch-scoped Ruby quality checks for the current Git repository
+
+Usage: ruby_qa [--base REF]
+
+Run Ruby quality checks against files changed from the branch merge base,
+including staged, unstaged, and untracked files.
+
+Options:
+  --base REF  Compare with REF instead of the repository default branch.
+              RUBY_QA_BASE_REF provides the same override.
+  -h, --help  Show this help.
+  -v, -V, --version
+              Show the version.
+
+Examples:
+  ruby_qa
+  ruby_qa --base origin/main
+  RUBY_QA_BASE_REF=upstream/main ruby_qa
+EOF
+}
+
+usage_error() {
+  printf 'error:\n  message: %s\n  help: Run ruby_qa --help for valid options.\n' "$1"
+  exit 2
+}
+
+if [ "$#" -eq 1 ]; then
+  case "$1" in
+    -v|-V|--version)
+      printf '%s\n' "$VERSION"
+      exit 0
+      ;;
+  esac
+fi
+
+base_ref="${RUBY_QA_BASE_REF:-}"
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --base)
+      [ "$#" -ge 2 ] || usage_error '--base requires a ref'
+      base_ref="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage_error "unknown option: $1"
+      ;;
+  esac
+done
+
+command -v git >/dev/null 2>&1 || {
+  printf '%s\n' 'error:' '  message: git is required' '  help: Install Git, then run ruby_qa again.'
+  exit 1
+}
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  printf '%s\n' 'error:' '  message: this directory is not inside a Git repository' '  help: Change to a Git repository, then run ruby_qa again.'
+  exit 1
+}
+cd "$repo_root"
+
+if [ -z "$base_ref" ]; then
+  base_ref="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || true)"
+fi
+if [ -z "$base_ref" ] && git show-ref --verify --quiet refs/remotes/origin/main; then
+  base_ref='origin/main'
+fi
+if [ -z "$base_ref" ] && git show-ref --verify --quiet refs/heads/main; then
+  base_ref='main'
+fi
+if [ -z "$base_ref" ] && git show-ref --verify --quiet refs/remotes/origin/master; then
+  base_ref='origin/master'
+fi
+if [ -z "$base_ref" ] && git show-ref --verify --quiet refs/heads/master; then
+  base_ref='master'
+fi
+if [ -z "$base_ref" ]; then
+  printf '%s\n' 'error:' '  message: could not find a default branch' '  help: Run ruby_qa --base REF with the branch to compare.'
+  exit 1
+fi
+if ! git rev-parse --verify --quiet "${base_ref}^{commit}" >/dev/null; then
+  printf 'error:\n  message: "base ref does not resolve to a commit: %s"\n  help: Fetch the ref or pass an existing ref with ruby_qa --base REF.\n' "$base_ref"
+  exit 1
+fi
+
+merge_base="$(git merge-base HEAD "$base_ref" 2>/dev/null)" || {
+  printf 'error:\n  message: "HEAD and %s do not share a merge base"\n  help: Pass a related ref with ruby_qa --base REF.\n' "$base_ref"
+  exit 1
+}
+
+changed_files=()
+while IFS= read -r -d '' file; do
+  changed_files+=("$file")
+done < <(git diff --name-only --diff-filter=ACMR -z "$merge_base" --)
+while IFS= read -r -d '' file; do
+  changed_files+=("$file")
+done < <(git ls-files --others --exclude-standard -z)
+
+if [ "${#changed_files[@]}" -eq 0 ]; then
+  printf 'result:\n  status: passed\n  checks: 0\n  reason: "no files changed from %s"\n' "$base_ref"
+  exit 0
+fi
+
+is_ruby_file() {
+  case "$1" in
+    *.rb|*.rake|*.gemspec|*.ru|Gemfile|Gemfile.*|Rakefile|Guardfile|Capfile) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_rails_source() {
+  case "$1" in
+    app/*|config/*|lib/*|components/*|packs/*|packages/*|engines/*)
+      case "$1" in
+        *.rb|*.rake|*.erb|*.haml|*.slim) return 0 ;;
+      esac
+      ;;
+  esac
+  return 1
+}
+
+is_packwerk_source() {
+  case "$1" in
+    app/*|lib/*|components/*|packs/*|packages/*|engines/*)
+      case "$1" in
+        *.rb|*.rake|*.erb) return 0 ;;
+      esac
+      ;;
+  esac
+  return 1
+}
+
+is_quality_input() {
+  is_ruby_file "$1" && return 0
+  case "$1" in
+    *.erb|*.haml|*.slim|packwerk.yml|package.yml|*/package.yml|package_todo.yml|*/package_todo.yml)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+project_root_for_file() {
+  local candidate
+
+  candidate="$(dirname "$1")"
+  while :; do
+    if [ -f "$repo_root/$candidate/Gemfile" ]; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+    [ "$candidate" = '.' ] && break
+    candidate="$(dirname "$candidate")"
+  done
+  printf '.\n'
+}
+
+project_roots=()
+add_project_root() {
+  local candidate="$1"
+  local existing
+
+  if [ "${#project_roots[@]}" -gt 0 ]; then
+    for existing in "${project_roots[@]}"; do
+      [ "$existing" = "$candidate" ] && return
+    done
+  fi
+  project_roots+=("$candidate")
+}
+
+for file in "${changed_files[@]}"; do
+  [ -f "$file" ] || continue
+  if is_quality_input "$file"; then
+    add_project_root "$(project_root_for_file "$file")"
+  fi
+done
+
+if [ "${#project_roots[@]}" -eq 0 ]; then
+  printf 'result:\n  status: passed\n  checks: 0\n  reason: "no Ruby files affected relative to %s"\n' "$base_ref"
+  exit 0
+fi
+
+run_command() {
+  local exit_status
+
+  printf '==>' >&2
+  printf ' %q' "$@" >&2
+  printf '\n' >&2
+  if "$@"; then
+    return 0
+  else
+    exit_status="$?"
+  fi
+  printf 'result:\n  status: failed\n  exit_code: %s\n  command:' "$exit_status"
+  printf ' %q' "$@"
+  printf '\n'
+  return "$exit_status"
+}
+
+run_quality_tool() {
+  local executable="$1"
+  shift
+
+  if [ -f Gemfile ]; then
+    command -v bundle >/dev/null 2>&1 || {
+      printf 'error:\n  message: "bundle is required to run %s in this project"\n  help: Install the project bundle, then run ruby_qa again.\n' "$executable"
+      return 1
+    }
+    run_command bundle exec "$executable" "$@"
+    return
+  fi
+
+  command -v "$executable" >/dev/null 2>&1 || {
+    printf 'error:\n  message: "%s is not installed"\n  help: Run the dotfiles installer, then run ruby_qa again.\n' "$executable"
+    return 1
+  }
+  run_command "$executable" "$@"
+}
+
+join_with_commas() {
+  local joined=''
+  local value
+
+  for value in "$@"; do
+    case "$value" in
+      *,*)
+        printf 'error:\n  message: "Brakeman cannot safely scope a path containing a comma: %s"\n  help: Rename the path before running ruby_qa.\n' "$value"
+        return 1
+        ;;
+    esac
+    if [ -n "$joined" ]; then
+      joined="$joined,$value"
+    else
+      joined="$value"
+    fi
+  done
+  printf '%s\n' "$joined"
+}
+
+printf 'ruby_qa: checking files affected relative to %s\n' "$base_ref" >&2
+checks_run=0
+
+for project_root in "${project_roots[@]}"; do
+  ruby_files=()
+  brakeman_files=()
+  packwerk_files=()
+  spec_files=()
+  reek_files=()
+  packwerk_config_changed=false
+  printf '  project: %s\n' "$project_root" >&2
+
+  for file in "${changed_files[@]}"; do
+    [ -f "$repo_root/$file" ] || continue
+    [ "$(project_root_for_file "$file")" = "$project_root" ] || continue
+
+    if [ "$project_root" = '.' ]; then
+      relative_file="$file"
+    else
+      relative_file="${file#"$project_root/"}"
+    fi
+    is_quality_input "$relative_file" || continue
+    printf '    %s\n' "$relative_file" >&2
+
+    if is_ruby_file "$relative_file"; then
+      ruby_files+=("$relative_file")
+      case "$relative_file" in
+        spec/*_spec.rb) spec_files+=("$relative_file") ;;
+      esac
+      case "$relative_file" in
+        spec/*|test/*|db/schema.rb|db/structure.sql|Gemfile|Gemfile.*|Rakefile) ;;
+        *) reek_files+=("$relative_file") ;;
+      esac
+    fi
+
+    is_rails_source "$relative_file" && brakeman_files+=("$relative_file")
+    is_packwerk_source "$relative_file" && packwerk_files+=("$relative_file")
+
+    case "$relative_file" in
+      packwerk.yml|package.yml|*/package.yml|package_todo.yml|*/package_todo.yml)
+        packwerk_config_changed=true
+        ;;
+    esac
+  done
+
+  cd "$repo_root/$project_root"
+
+  if [ "${#ruby_files[@]}" -gt 0 ]; then
+    checks_run=$((checks_run + 1))
+    run_quality_tool rubocop --force-exclusion -- "${ruby_files[@]}"
+  fi
+
+  if [ -f config/application.rb ] && [ "${#brakeman_files[@]}" -gt 0 ]; then
+    checks_run=$((checks_run + 1))
+    brakeman_scope="$(join_with_commas "${brakeman_files[@]}")"
+    run_quality_tool brakeman --no-pager --only-files "$brakeman_scope"
+  fi
+
+  if [ -f packwerk.yml ]; then
+    if [ "$packwerk_config_changed" = true ]; then
+      checks_run=$((checks_run + 1))
+      run_quality_tool packwerk validate
+    fi
+    if [ "${#packwerk_files[@]}" -gt 0 ]; then
+      checks_run=$((checks_run + 1))
+      run_quality_tool packwerk check "${packwerk_files[@]}"
+    fi
+  fi
+
+  if [ "${#spec_files[@]}" -gt 0 ]; then
+    checks_run=$((checks_run + 1))
+    run_quality_tool rspec "${spec_files[@]}"
+  fi
+
+  if [ "${#reek_files[@]}" -gt 0 ]; then
+    checks_run=$((checks_run + 1))
+    run_quality_tool reek -- "${reek_files[@]}"
+  fi
+
+  cd "$repo_root"
+done
+
+if [ "$checks_run" -gt 0 ]; then
+  printf 'result:\n  status: passed\n  checks: %s\n' "$checks_run"
+else
+  printf '%s\n' 'result:' '  status: passed' '  checks: 0' '  reason: no configured checks apply to the affected files'
+fi

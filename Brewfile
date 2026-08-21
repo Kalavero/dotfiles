@@ -23,6 +23,7 @@ brew "gh"
 brew "kimi-code"
 
 # Ruby development
+brew "gnupg"  # verifies RVM installer signatures
 brew "libyaml"
 brew "openssl"
 
