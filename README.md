@@ -33,7 +33,7 @@ cd ~/kalavero_dotfiles
 The install script will:
 1. Install [Homebrew](https://brew.sh) if needed
 2. Install all dependencies from the `Brewfile`, including Node.js, GnuPG, and [Kimi Code](https://www.kimi.com/code)
-3. Install [RVM](https://rvm.io), verify its installer signature, and install its latest stable Ruby as the default
+3. Install [RVM](https://rvm.io), verify its installer signature, and activate the existing default Ruby or install RVM's stable Ruby when no default exists
 4. Install RuboCop with its Rails, RSpec, and performance extensions, plus Brakeman, Reek, and Packwerk into the default RVM Ruby
 5. Install [Pi](https://pi.dev/), [OpenCode](https://opencode.ai/), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [treehouse](https://github.com/kunchenguid/treehouse), and the [Skills CLI](https://skills.sh/), clone [firstmate](https://github.com/kunchenguid/firstmate) to `~/firstmate`, then add shared agent skills ([AXI](https://github.com/kunchenguid/axi), [Lavish](https://github.com/kunchenguid/lavish-axi), [stow](https://github.com/kunchenguid/firstmate)) and Lavish's session hooks
 6. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins

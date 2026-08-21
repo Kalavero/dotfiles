@@ -72,12 +72,16 @@ install_rvm_and_ruby() {
     return 1
   fi
 
-  echo "==> Installing the default Ruby with RVM..."
   # RVM's shell functions are not compatible with Bash nounset.
   set +u
   # shellcheck source=/dev/null
   source "$rvm_script"
-  rvm use --default --install ruby
+  if rvm use default; then
+    echo "==> Using the existing default RVM Ruby."
+  else
+    echo "==> Installing the default Ruby with RVM..."
+    rvm use --default --install ruby
+  fi
   set -u
 }
 
