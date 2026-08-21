@@ -7,6 +7,16 @@ cd "$DOTFILES_DIR"
 echo "==> Kalavero Dotfiles Installer"
 echo ""
 
+RVM_INSTALLER_FILE=""
+
+cleanup_rvm_installer() {
+  if [ -n "$RVM_INSTALLER_FILE" ]; then
+    rm -f -- "$RVM_INSTALLER_FILE" "$RVM_INSTALLER_FILE.asc"
+  fi
+}
+
+trap cleanup_rvm_installer EXIT
+
 load_homebrew_environment() {
   local brew_executable
 
@@ -36,9 +46,45 @@ fi
 echo "==> Installing Homebrew packages..."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 
-# 3. Install Ruby quality tools
+# 3. Install RVM and the default Ruby
+install_rvm_and_ruby() {
+  local rvm_script="$HOME/.rvm/scripts/rvm"
+  local rvm_signing_keys=(
+    409B6B1796C275462A1703113804BB82D39DC0E3
+    7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+  )
+
+  if [ ! -s "$rvm_script" ]; then
+    echo "==> Installing RVM..."
+    gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "${rvm_signing_keys[@]}"
+
+    RVM_INSTALLER_FILE="$(mktemp "${TMPDIR:-/tmp}/kalavero-rvm-installer.XXXXXX")"
+    curl -fsSL https://raw.githubusercontent.com/rvm/rvm/stable/binscripts/rvm-installer \
+      -o "$RVM_INSTALLER_FILE"
+    curl -fsSL https://raw.githubusercontent.com/rvm/rvm/stable/binscripts/rvm-installer.asc \
+      -o "$RVM_INSTALLER_FILE.asc"
+    gpg --batch --verify "$RVM_INSTALLER_FILE.asc" "$RVM_INSTALLER_FILE"
+    rvm_ignore_dotfiles=yes bash "$RVM_INSTALLER_FILE" stable
+  fi
+
+  if [ ! -s "$rvm_script" ]; then
+    echo "RVM was installed but $rvm_script could not be found." >&2
+    return 1
+  fi
+
+  echo "==> Installing the default Ruby with RVM..."
+  # RVM's shell functions are not compatible with Bash nounset.
+  set +u
+  # shellcheck source=/dev/null
+  source "$rvm_script"
+  rvm use --default --install ruby
+  set -u
+}
+
+install_rvm_and_ruby
+
+# 4. Install Ruby quality tools
 install_ruby_quality_tools() {
-  local ruby_gem
   local gem_name
   local missing_gems=()
   local quality_gems=(
@@ -51,14 +97,13 @@ install_ruby_quality_tools() {
     packwerk
   )
 
-  ruby_gem="$(brew --prefix ruby)/bin/gem"
-  if [ ! -x "$ruby_gem" ]; then
-    echo "Homebrew RubyGems was not found at $ruby_gem" >&2
+  if ! command -v gem >/dev/null 2>&1; then
+    echo "RubyGems was not found after activating the default RVM Ruby." >&2
     return 1
   fi
 
   for gem_name in "${quality_gems[@]}"; do
-    if ! "$ruby_gem" list --installed --exact "$gem_name" >/dev/null 2>&1; then
+    if ! gem list --installed --exact "$gem_name" >/dev/null 2>&1; then
       missing_gems+=("$gem_name")
     fi
   done
@@ -68,13 +113,12 @@ install_ruby_quality_tools() {
   fi
 
   echo "==> Installing Ruby quality tools..."
-  mkdir -p "$HOME/.local/bin"
-  "$ruby_gem" install --no-document --bindir "$HOME/.local/bin" "${missing_gems[@]}"
+  gem install --no-document "${missing_gems[@]}"
 }
 
 install_ruby_quality_tools
 
-# 4. Install AI coding tools not managed by Homebrew
+# 5. Install AI coding tools not managed by Homebrew
 if ! command -v pi &>/dev/null; then
   echo "==> Installing Pi..."
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent
@@ -127,13 +171,13 @@ if command -v lavish-axi &>/dev/null; then
   lavish-axi setup hooks
 fi
 
-# 5. Clone TPM (Tmux Plugin Manager) if needed
+# 6. Clone TPM (Tmux Plugin Manager) if needed
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   echo "==> Installing Tmux Plugin Manager..."
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-# 6. Create undo directory for Neovim
+# 7. Create undo directory for Neovim
 mkdir -p "$HOME/.config/nvim/undodir"
 
 prompt_terminal_font() {
@@ -173,16 +217,16 @@ font-family = $font_family
 EOF
 }
 
-# 7. Choose the terminal font
+# 8. Choose the terminal font
 terminal_font="$(prompt_terminal_font)"
 
-# 8. Publish workflow assets and stow packages
+# 9. Publish workflow assets and stow packages
 ./sync.sh
 
-# 9. Apply machine-specific Ghostty font override
+# 10. Apply machine-specific Ghostty font override
 write_ghostty_font_override "$terminal_font"
 
-# 10. Set Zsh as default shell
+# 11. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   desired_shell="/bin/zsh"
   if [ -x "$desired_shell" ] && grep -Fxq "$desired_shell" /etc/shells; then
