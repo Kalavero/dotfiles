@@ -23,6 +23,7 @@ brew "gh"
 brew "kimi-code"
 
 # Ruby development
+brew "ruby"
 brew "libyaml"
 brew "openssl"
 

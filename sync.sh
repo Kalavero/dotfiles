@@ -484,9 +484,11 @@ while IFS= read -r pkg || [ -n "$pkg" ]; do
   if [ -d "$DOTFILES_DIR/$pkg" ]; then
     backup_package_conflicts "$pkg"
     stow_args=(-v -d "$DOTFILES_DIR" -t "$TARGET_HOME")
-    # herdr writes runtime state into ~/.config/herdr; folding would turn that
-    # directory into a symlink into the repository, bypassing .stow-local-ignore.
-    [ "$pkg" = herdr ] && stow_args+=(--no-folding)
+    # Herdr and ~/.local both contain runtime state. Folding either directory
+    # would redirect that state into the repository.
+    case "$pkg" in
+      bin|herdr) stow_args+=(--no-folding) ;;
+    esac
     if [ "$DRY_RUN" = true ]; then
       echo "  Would stow $pkg..."
       stow --simulate "${stow_args[@]}" "$pkg"

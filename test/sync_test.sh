@@ -81,6 +81,7 @@ ln -s "$REPO_DIR/plugins/kalavero/skills/agent-brief" "$target_home/.codex/skill
 "$REPO_DIR/sync.sh" --target-home "$target_home" > "$test_root/first-run.log" 2>&1
 
 assert_symlink "$target_home/.zshrc"
+assert_symlink "$target_home/.local/bin/ruby_qa"
 assert_symlink "$target_home/.claude/commands"
 assert_file "$target_home/.claude/agents/custom-researcher.md"
 [ ! -e "$target_home/.claude/agents/researcher.md" ] || fail 'user-managed agent name should win'

@@ -13,7 +13,7 @@ Personal development environment for macOS, managed with [GNU Stow](https://www.
 | `tmux/` | Tmux | Ctrl-a prefix, vim-aware navigation, TPM |
 | `git/` | Git | 39 aliases, nvimdiff mergetool |
 | `starship/` | Starship prompt | Git branch/status, Ruby/Node versions |
-| `bin/` | Scripts | `tat` — tmux attach-or-create |
+| `bin/` | Scripts | `tat` (tmux attach-or-create), `ruby_qa` (branch-scoped Ruby checks) |
 | `ghostty/` | [Ghostty](https://ghostty.org) terminal | Rose Pine Moon, font chosen at install (Hack or JetBrainsMono Nerd Font), option-as-alt, 0.8 opacity, blur 50 |
 | `herdr/` | [Herdr](https://herdr.dev) agent multiplexer | Ctrl-a prefix, tmux-like pane/tab bindings |
 | `plugins/` | [Claude Code](https://claude.com/claude-code) plugin | Commands, skills, and agents for AI-assisted development (see [AI Workflow](#ai-workflow-claude-code)) |
@@ -32,12 +32,13 @@ cd ~/kalavero_dotfiles
 
 The install script will:
 1. Install [Homebrew](https://brew.sh) if needed
-2. Install all dependencies from the `Brewfile`, including Node.js and [Kimi Code](https://www.kimi.com/code)
-3. Install [Pi](https://pi.dev/), [OpenCode](https://opencode.ai/), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [treehouse](https://github.com/kunchenguid/treehouse), and the [Skills CLI](https://skills.sh/), clone [firstmate](https://github.com/kunchenguid/firstmate) to `~/firstmate`, then add shared agent skills ([AXI](https://github.com/kunchenguid/axi), [Lavish](https://github.com/kunchenguid/lavish-axi), [stow](https://github.com/kunchenguid/firstmate)) and Lavish's session hooks
-4. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
-5. Publish the shared Claude/OpenCode/Pi/Codex workflow assets and the global agent instructions file into the tool-specific locations they scan
-6. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)
-7. Set Zsh as the default shell
+2. Install all dependencies from the `Brewfile`, including Ruby, Node.js, and [Kimi Code](https://www.kimi.com/code)
+3. Install RuboCop with its Rails, RSpec, and performance extensions, plus Brakeman, Reek, and Packwerk
+4. Install [Pi](https://pi.dev/), [OpenCode](https://opencode.ai/), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [treehouse](https://github.com/kunchenguid/treehouse), and the [Skills CLI](https://skills.sh/), clone [firstmate](https://github.com/kunchenguid/firstmate) to `~/firstmate`, then add shared agent skills ([AXI](https://github.com/kunchenguid/axi), [Lavish](https://github.com/kunchenguid/lavish-axi), [stow](https://github.com/kunchenguid/firstmate)) and Lavish's session hooks
+5. Clone [TPM](https://github.com/tmux-plugins/tpm) for tmux plugins
+6. Publish the shared Claude/OpenCode/Pi/Codex workflow assets and the global agent instructions file into the tool-specific locations they scan
+7. Symlink a global `~/AGENTS.md` instructions file and stow all packages (symlink configs to `$HOME`)
+8. Set Zsh as the default shell
 
 The installer is interactive: the font prompt has no bypass flag, so unattended runs block waiting for an answer. It also runs `no-mistakes init` inside this repo, installing a commit gate on the dotfiles checkout itself — not just on your projects.
 
@@ -149,6 +150,14 @@ Prefix: **Ctrl-a**
 
 Two aliases make machine assumptions: `ae` assumes the repo is cloned at `~/kalavero_dotfiles` (the default install path), and `mykey` expects an RSA public key at `~/.ssh/id_rsa.pub`.
 
+### Ruby quality checks
+
+Run `ruby_qa` from a Git repository to check only files affected by the current branch. It compares the working tree with the default branch merge base and includes committed, staged, unstaged, and untracked files. In a monorepo, it groups changed files by their nearest `Gemfile` and runs each project's checks from the correct directory. Override the comparison point with `ruby_qa --base REF` or `RUBY_QA_BASE_REF=REF`.
+
+The command scopes RuboCop and Reek to changed Ruby files, Brakeman to changed Rails source files, Packwerk checks to changed application source files, and RSpec to changed spec files. Packwerk validation runs only when Packwerk configuration changes. Checks that do not apply to the project or branch are skipped.
+
+When a project has a `Gemfile`, `ruby_qa` uses `bundle exec` so the project controls tool versions. Add each applicable quality gem to that project's bundle. Without a `Gemfile`, it uses the globally installed tools from `~/.local/bin`.
+
 ## Customization
 
 Override any config locally without touching tracked files:
@@ -222,8 +231,9 @@ Agents are specialized subagent personas, launched individually or coordinated b
 | `implementer` | Executes exactly one task — failing test first, minimal code, honest report |
 | `test-engineer` | Test strategy, coverage analysis, and test writing in the project's idiom |
 | `code-reviewer` | Five-axis review (correctness, readability, architecture, security, performance) with an APPROVE / REQUEST CHANGES verdict |
+| `reviewer` | Independent architecture, performance, and correctness review from the task, raw diff, and architecture docs only |
 
-`/kalavero:implement` wires them together: researcher maps the code, planner produces a task list (gated on human approval), then for each task the implementer builds while test-engineer and code-reviewer verify in parallel — failed reviews loop back to the implementer, capped at two rounds before escalating to you.
+`/kalavero:implement` wires them together: researcher maps the code, planner produces a task list (gated on human approval), then for each task the implementer builds while test-engineer and reviewer verify in parallel. The reviewer receives only the original task description, raw diff, and relevant architecture docs, keeping its assessment independent from the implementer's reasoning. Failed reviews loop back to the implementer, capped at two rounds before escalating to you.
 
 ## Testing with Docker
 

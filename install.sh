@@ -36,7 +36,45 @@ fi
 echo "==> Installing Homebrew packages..."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 
-# 3. Install AI coding tools not managed by Homebrew
+# 3. Install Ruby quality tools
+install_ruby_quality_tools() {
+  local ruby_gem
+  local gem_name
+  local missing_gems=()
+  local quality_gems=(
+    rubocop
+    rubocop-rails
+    rubocop-rspec
+    rubocop-performance
+    brakeman
+    reek
+    packwerk
+  )
+
+  ruby_gem="$(brew --prefix ruby)/bin/gem"
+  if [ ! -x "$ruby_gem" ]; then
+    echo "Homebrew RubyGems was not found at $ruby_gem" >&2
+    return 1
+  fi
+
+  for gem_name in "${quality_gems[@]}"; do
+    if ! "$ruby_gem" list --installed --exact "$gem_name" >/dev/null 2>&1; then
+      missing_gems+=("$gem_name")
+    fi
+  done
+
+  if [ "${#missing_gems[@]}" -eq 0 ]; then
+    return 0
+  fi
+
+  echo "==> Installing Ruby quality tools..."
+  mkdir -p "$HOME/.local/bin"
+  "$ruby_gem" install --no-document --bindir "$HOME/.local/bin" "${missing_gems[@]}"
+}
+
+install_ruby_quality_tools
+
+# 4. Install AI coding tools not managed by Homebrew
 if ! command -v pi &>/dev/null; then
   echo "==> Installing Pi..."
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent
@@ -89,13 +127,13 @@ if command -v lavish-axi &>/dev/null; then
   lavish-axi setup hooks
 fi
 
-# 4. Clone TPM (Tmux Plugin Manager) if needed
+# 5. Clone TPM (Tmux Plugin Manager) if needed
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   echo "==> Installing Tmux Plugin Manager..."
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-# 5. Create undo directory for Neovim
+# 6. Create undo directory for Neovim
 mkdir -p "$HOME/.config/nvim/undodir"
 
 prompt_terminal_font() {
@@ -135,16 +173,16 @@ font-family = $font_family
 EOF
 }
 
-# 6. Choose the terminal font
+# 7. Choose the terminal font
 terminal_font="$(prompt_terminal_font)"
 
-# 7. Publish workflow assets and stow packages
+# 8. Publish workflow assets and stow packages
 ./sync.sh
 
-# 8. Apply machine-specific Ghostty font override
+# 9. Apply machine-specific Ghostty font override
 write_ghostty_font_override "$terminal_font"
 
-# 9. Set Zsh as default shell
+# 10. Set Zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
   desired_shell="/bin/zsh"
   if [ -x "$desired_shell" ] && grep -Fxq "$desired_shell" /etc/shells; then
