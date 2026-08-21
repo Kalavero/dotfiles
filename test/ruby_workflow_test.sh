@@ -18,7 +18,10 @@ for gem_name in \
 done
 
 [ -x "$REPO_DIR/bin/.local/bin/ruby_qa" ] || fail 'ruby_qa must be executable'
-assert_contains 'ruby_qa' "$REPO_DIR/plugins/kalavero/agents/implementer.md"
+assert_contains 'When the task affects Ruby, Rails, RSpec, or Packwerk files' "$REPO_DIR/plugins/kalavero/agents/implementer.md"
+assert_contains 'is required only for tasks affecting Ruby, Rails, RSpec, or Packwerk files' "$REPO_DIR/plugins/kalavero/agents/implementer.md"
+assert_not_contains 'even when the task is not Ruby-specific' "$REPO_DIR/plugins/kalavero/agents/implementer.md"
+assert_not_contains 'mandatory for every task' "$REPO_DIR/plugins/kalavero/agents/implementer.md"
 assert_file "$REPO_DIR/plugins/kalavero/agents/reviewer.md"
 assert_contains 'Task Description' "$REPO_DIR/plugins/kalavero/agents/reviewer.md"
 assert_contains 'Raw Diff' "$REPO_DIR/plugins/kalavero/agents/reviewer.md"
