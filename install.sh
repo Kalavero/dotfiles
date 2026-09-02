@@ -138,16 +138,6 @@ if ! command -v opencode &>/dev/null; then
   curl -fsSL https://opencode.ai/install | bash
 fi
 
-if ! command -v no-mistakes &>/dev/null; then
-  echo "==> Installing no-mistakes..."
-  curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh | sh
-fi
-
-if command -v no-mistakes &>/dev/null && ! git remote get-url no-mistakes &>/dev/null; then
-  echo "==> Initializing the no-mistakes gate for this repo..."
-  no-mistakes init
-fi
-
 if ! command -v treehouse &>/dev/null; then
   echo "==> Installing treehouse..."
   curl -fsSL https://kunchenguid.github.io/treehouse/install.sh | sh
